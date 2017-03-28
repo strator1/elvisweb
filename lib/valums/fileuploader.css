@@ -1,0 +1,31 @@
+.qq-uploader { position:relative; width: 100%; height:32px; }
+
+.qq-upload-button {
+    display:block; /* or inline-block */
+    width: 105px; padding: 7px 0; text-align:center; font-size: 9px;
+    background:#B50018; border:1px solid #737373;color:#fff;
+}
+.qq-upload-button-hover {background:#FF5E00;}
+.qq-upload-button-focus {outline:1px dotted black;}
+
+.qq-upload-drop-area {
+    position:absolute; top:-34px; left:-310px; width:992px; height:100px; z-index:2;
+    background:#FF5E00; text-align:center; 
+}
+.qq-upload-drop-area span {
+    display:block; position:absolute; top: 40px; width:992px; margin-top:0px; font-size:16px; z-index: 10; color: #ffffff;
+}
+.qq-upload-drop-area-active {background:#B50018;}
+
+.qq-upload-list {margin:15px 35px; padding:0; list-style:none;}
+.qq-upload-list li { margin:0; padding:0; line-height:15px; font-size:12px;}
+.qq-upload-file, .qq-upload-spinner, .qq-upload-size, .qq-upload-cancel, .qq-upload-failed-text {
+    margin-right: 7px;
+}
+
+.qq-upload-file {}
+.qq-upload-spinner {display:inline-block; background: url("loading.gif"); width:15px; height:15px; vertical-align:text-bottom;}
+.qq-upload-size,.qq-upload-cancel {font-size:11px;}
+
+.qq-upload-failed-text {display:none;}
+.qq-upload-fail .qq-upload-failed-text {display:inline;}

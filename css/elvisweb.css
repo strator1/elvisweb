@@ -1,0 +1,54 @@
+body {
+    font: 12px "sans-serif", sans-serif;
+    margin-top:0px; 
+    margin-left: 20px; 
+    margin-right:20px;
+    background-color:#ffffff;
+    padding-top: 0px;
+}
+
+#tabs {
+    margin: 0 auto;
+}
+
+.browser {
+    width:50px;
+    height:50px;
+}
+
+h1 {
+    font-size: 1.2em;
+    color: #0000ff;
+    font-weight: bold;
+}
+
+.arrayTable {
+    border: 1px solid #666666;
+    border-collapse: collapse;
+    font-family: Sans-Serif;
+    font-size: 10px;
+}
+
+.arrayTable td {
+    border: 1px solid #666666;
+    padding: 2px;
+}
+
+.arrayTable tr.odd {
+    background-color: #eee;
+    padding: 2px;
+}
+
+.arrayTable tr.headerRow {
+    padding: 5px;
+    color: #666666;
+}
+
+.arrayTable caption {
+    padding: 2px 0px 2px 0px;
+    font-size: 10px;
+}
+
+@media print {
+    #non-printable { display: none; }
+}

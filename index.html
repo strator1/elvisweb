@@ -1,0 +1,347 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta http-equiv="X-UA-Compatible" content="IE=8"/>
+
+        <title>ElVisWeb</title>
+
+        <link href="css/elvisweb.css" rel="stylesheet" type="text/css"/>
+        <link href="lib/valums/fileuploader.css" rel="stylesheet" type="text/css"/>
+        <link type="text/css" href="lib/jquery/custom-theme/jquery-ui-1.8.12.custom.css" rel="stylesheet"/>
+        <link type="text/css" href="lib/jquery/jquery.jqplot.css" rel="stylesheet"/>
+            
+        <script type="text/javascript" src="lib/dateFormat/date.format.js"></script>
+        <script type="text/javascript" src="lib/DP_DateExtension/DP_DateExtensions.js"></script>
+            
+        <script type="text/javascript" src="lib/webtoolkit/webtoolkit.base64.js"></script>
+            
+        <script src="lib/valums/fileuploader.js" type="text/javascript"></script>
+            
+        <script type="text/javascript" src="lib/excanvas/excanvas.js"></script>
+            
+        <script type="text/javascript" src="lib/jquery/jquery-1.6.1.js"></script>
+        <script type="text/javascript" src="lib/jquery/jquery-ui-1.8.11.custom.min.js"></script>
+        <script type="text/javascript" src="lib/jquery/jquery.jqplot.js"></script>
+        <script type="text/javascript" src="lib/jquery/jqplot.enhancedLegendRenderer.js"></script>
+        <script type="text/javascript" src="lib/jquery/jqplot.pointLabels.js"></script>
+        <script type="text/javascript" src="lib/jquery/jquery.arrayToTable.js"></script>
+
+        <script type="text/javascript">
+            $.jqplot.config.enablePlugins = true;
+        </script>
+        <script type="text/javascript" src="lib/jquery/jqplot.cursor.js"></script>
+            
+        <script type="text/javascript" src="lib/sarissa/sarissa.js"></script>
+        <script type="text/javascript" src="lib/sarissa/sarissa_ieemu_xpath.js"></script>
+        <script type="text/javascript" src="lib/sarissa/javeline_xpath.js"></script>
+        
+        <script type="text/javascript" src="scripts/parse.js"></script>
+            
+        <script type="text/javascript" src="lib/zeroclipboard/ZeroClipboard.js"></script>
+        
+        <script type="text/javascript">
+            var UPLOAD_ACTION = "lib/valums/sendback.php";
+            var UPLOAD_ALLOWED_FILE_EXTENSIONS = ["elvisml", "xml"];
+            var UPLOADER_DIV = "file-uploader";
+            
+            var elvisNode;
+            var recordingSessionNode;
+            
+            $(document).ready(function() {
+                new qq.FileUploader({
+                    element: document.getElementById(UPLOADER_DIV),
+                    action: UPLOAD_ACTION,
+                    allowedExtensions: UPLOAD_ALLOWED_FILE_EXTENSIONS,
+                    debug: false,
+                    
+                    onComplete: function(id, fileName, responseJSON) {
+                        var elvisml = Base64.decode(responseJSON.content);
+                        init(elvisml);
+                    },
+                    showMessage: function(message) {
+                        alert(message);
+                    }
+                });
+            }
+        );
+            
+            $(function() {
+                $('#tabs').tabs();
+                $('#tabs').bind('tabsselect', function(event, ui) {
+                    var stepNode = getStepNodeByIndex(recodingSessionNode, ui.index);
+                    createPlots("tabContent", elvisNode, stepNode);
+                });
+            });
+            
+            function gotoStart() {
+                document.getElementById("home").style.display = "block";
+                document.getElementById("disclaimer").style.display = "none";
+                document.getElementById("info").style.display = "none";
+                document.getElementById("tabs").style.display = "none";
+                document.getElementById("patient").style.display = "none";
+
+                return false;
+            }
+            
+            function gotoCharts() {
+                document.getElementById("disclaimer").style.display = "none";
+                document.getElementById("info").style.display = "none";
+                document.getElementById("home").style.display = "none";
+                document.getElementById("tabs").style.display = "block";
+                document.getElementById("patient").style.display = "block";
+                
+                return false;
+            }
+
+            function gotoDisclaimer() {
+                document.getElementById("home").style.display = "none";
+                document.getElementById("disclaimer").style.display = "block";
+                document.getElementById("info").style.display = "none";
+                document.getElementById("tabs").style.display = "none";
+                document.getElementById("patient").style.display = "none";
+
+                return false;
+            }
+
+            function gotoInfo() {
+                document.getElementById("home").style.display = "none";
+                document.getElementById("disclaimer").style.display = "none";
+                document.getElementById("info").style.display = "block";
+                document.getElementById("tabs").style.display = "none";
+                document.getElementById("patient").style.display = "none";
+
+                return false;
+            }
+            
+            function init(elvisml) {
+                gotoCharts();
+                
+                elvisNode = createDOMDocument(elvisml);
+                var protocolNode = getProtocol(elvisNode);
+                recodingSessionNode = getRecordingSessionNode(elvisNode);
+                
+                var tabLength = $('#tabs').tabs("length");
+                for (var i = 0; i < tabLength; i++) {
+                    $('#tabs').tabs("remove", 0);
+                }
+                var stepNames = getStepNames(protocolNode);
+                for (var i = 0; i < stepNames.length; i++) {
+                    $('#tabs').tabs("add", "#tabs-" + i, stepNames[i]);
+                }
+                
+                var subjectNode = getSubjectNode(elvisNode);
+                var recordingDate = getRecordingDate(recodingSessionNode);
+                var birthdate = getSubjectBirthdate(subjectNode);
+                var age = calcAge(birthdate, recordingDate);
+
+                document.getElementById("PatientName").innerHTML = getSubjectName(subjectNode);
+                document.getElementById("PatientGender").innerHTML = getSubjectGender(subjectNode);
+                document.getElementById("PatientBirthdate").innerHTML = birthdate.format("mmmm dS, yyyy") + " (" + age + "y)";
+                
+                document.getElementById("RecordingDate").innerHTML = recordingDate.format("mmmm dS, yyyy HH:mm");
+                document.getElementById("RecordingComments").innerHTML = getRecordingComments(recodingSessionNode);
+                
+                var stepNode = getStepNodeByIndex(recodingSessionNode, 0);
+                createPlots("tabContent", elvisNode, stepNode);
+            }
+        </script>
+    </head>
+    <body>
+            <table border="0" cellpadding="0" cellspacing="0" width="100%" summary="">
+                <tr>
+                    <td height="30">&nbsp;</td>
+                </tr>
+                <tr>
+                    <td valign="top" align="center">
+                        <table border="0" cellpadding="10" cellspacing="0" width="994" class="ui-widget-content ui-corner-all">
+                            <tr>
+                                <td align="left" valign="top" width="280"><a href="http://www.medizin.uni-tuebingen.de" target="_blank" title="University Hospital Tuebingen"><img src="images/logo_ukt.gif" width="156" height="80" border="0" alt="University Hospital Tuebingen"/></a><a href="http://www.medizin.uni-tuebingen.de/augenklinik/" target="_blank" title="University Eye Hospital Tuebingen"><img src="images/uak-logo.jpg" width="114" height="80" border="0" alt="University Eye Hospital Tuebingen"/></a></td>
+                                <td width="150" align="right" valign="middle">
+                                    <div id="file-uploader"><noscript>Please enable JavaScript to use file uploader.</noscript></div>    
+                                </td>
+                                <td  align="left" valign="middle">
+                                    <div id="history"></div>
+                                </td>
+                                <td align="right" valign="top" width="168">
+                                    <a href="http://www.hs-augsburg.de" target="_blank" title="University of Applied Sciences Augsburg"><img src="images/hsa.jpg" width="148" height="80" border="0" alt="University of Applied Sciences Augsburg"/></a>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+            <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                <tr>
+                    <td height="30">&nbsp;</td>
+                </tr>
+            </table>
+            <div id="home">
+                <table border="0" cellpadding="0" cellspacing="0" width="100%" summary="">
+                    <tr>
+                        <td valign="top" align="center">
+                            <table border="0" cellpadding="10" cellspacing="0" width="994" summary="">
+                                <tr>
+                                    <td align="left" class="ui-widget-content ui-corner-all">
+                                        <h1>Purpose</h1>
+                                        Recently, we proposed a standard for the exchange of electrophysiological recordings of vision, called <b>Electrophysiology of Vision Markup Language</b> (<a href="http://www.w3.org/community/elvisml" target="_blank">ElVisML</a>). Here we present a Web 2.0 application, ElVisWeb, for visualizing data encoded in ElVisML. It intends to facilitate the exchange of recordings on mailing lists like CEVNet in a standardized way and to allow for sharing of data along with published articles.
+                                        <h1>Methods</h1>
+                                        Main goals of ElVisWeb were easy usage and deployment. It is developed completely in <a href="http://en.wikipedia.org/wiki/JavaScript" target="_blank">JavaScript</a> and as web application it does not require any installation on the client. It uses the single-page-interface paradigm (SPI): An ElVisML-file can be pasted into a text-field and a graphical representation of it is compiled. ElVisWeb can be deployed on any web-server or executed locally. For convenience, there is an upload functionality, which requires <a href="http://www.php.net" target="_blank">PHP</a> on the server, however. ElVisWeb leverages open source JavaScript libraries for XML-processing (<a href="http://dev.abiss.gr/sarissa" target="_blank">Sarissa</a>) and charts generation (<a href="http://www.jqplot.com" target="_blank">jqPlot</a>).
+                                        <h1>Results</h1>
+                                        A Web 2.0 application for visualization of electrophysiological recordings of vision, ElVisWeb, was successfully implemented. It is designed for easy usage and deployment. Recordings encoded in ElVisML can be visualized with no additional software installation.
+                                        <h1>Conclusions</h1>
+                                        ElVisML is a standardized way for exchanging electrophysiological data. ElVisWeb is a first step towards an open ecosystem around ElVisML. It provides chart generation for recordings and may be used in mailing lists like CEVNet or for sharing data along with published articles. It is also ready to be used on mobile devices.
+                                        <h1>How to</h1>
+                                        Follow the link above and upload an ElVisML file. Steps of a recording are shown in single tab which contains <br/>
+                                        single measurements. Click on the "Measurement information" button next to a chart to get detailed<br/>
+                                        information.<br/><br/>
+                                        ElVisML examples
+                                        <ul>
+                                            <li><a href="files/Extended_ISCEV_A_example.elvisml">ERG Extended ISCEV A</a></li>
+                                        </ul>
+                                        <br/><br/>
+                                        <b>Supported browsers:</b><br/><br/>
+                                        <a href="http://www.mozilla.com" target="_blank"><img alt="firefox" class="browser" src="images/firefox.png" border="0"/></a>
+                                        <a href="http://windows.microsoft.com/de-DE/internet-explorer/products/ie/home" target="_blank"><img alt="Internet Explorer" class="browser" src="images/ie.png" border="0"/></a>
+                                        <a href="http://www.google.com/chrome" target="_blank"><img class="browser" alt="Chrome" src="images/chrome.png" border="0"/></a>
+                                        <a href="http://www.apple.com/de/safari/" target="_blank"><img class="browser" alt="Safari" src="images/safari.png" border="0"/></a><br/><br/>
+                                        
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div id="disclaimer" style="display:none;">
+                <table border="0" cellpadding="0" cellspacing="0" width="100%" summary="">
+                    <tr>
+                        <td valign="top" align="center">
+                            <table border="0" cellpadding="10" cellspacing="0" width="994" summary="">
+                                <tr>
+                                    <td align="left" class="ui-widget-content ui-corner-all">
+                                        <h1>Disclaimer</h1>
+                                        <b>Copyright &copy; 2011 Torsten Stra&szlig;er</b><br/><br/>
+                                        <b>Institution</b><br/>
+                                        Biomedical Engineering Group<br/>
+                                        Institute for Opthalmic Research<br/>
+                                        Centre for Ophthalmology<br/>
+                                        University of Tuebingen<br/>
+                                        Germany<br/>
+                                        <br/>
+                                        ElVisWeb is a Free and Open Source Software (FOSS) licensed under the terms of the <a href="http://www.gnu.org/licenses/gpl.html" target="_blank">GNU General Public License</a> as published by the <a href="http://www.fsf.org/" target="_blank">Free Software Foundation</a>, either version 3 of the License, or (at your option) any later version. <b>This version of ElVisWeb is not certified as a medical device (CE-1 or FDA) for primary diagnosis or clinical practice. This software can only be used as a reviewing or scientific software and cannot be used as a medical device for primary diagnostic or any other clinical practice.</b><br/>
+                                        <br/>
+                                        ElVisWeb is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. ElVisWeb is distributed in the hope that it will be useful, but <b>WITHOUT ANY WARRANTY</b>; without even the implied warranty of <b>MERCHANTABILITY</b> or <b>FITNESS FOR A PARTICULAR PURPOSE</b>. See the GNU General Public License for more details (cf. GNU General Public License version 3).
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div id="info" style="display:none;">
+                <table border="0" cellpadding="0" cellspacing="0" width="100%" summary="">
+                    <tr>
+                        <td valign="top" align="center">
+                            <table border="0" cellpadding="10" cellspacing="0" width="994" summary="">
+                                <tr>
+                                    <td align="left" class="ui-widget-content ui-corner-all">
+                                        <h1>Information</h1>
+                                        The project was developed in cooperation with students of the Faculty of Computer Science, University of Applied Sciences, Augsburg, Germany.<br/><br/>
+                                        <b>Head</b><br/>
+                                        <a href="http://www.eye.uni-tuebingen.de/torsten-strasser" target="_blank">Dipl.-Inf. (FH) Torsten Stra&szlig;er, M. Sc</a><br/>
+                                        <br/>
+                                        The following students have been part of the project group:
+                                        <ul>
+                                            <li>Michail Oder</li>
+                                            <li>Aleksandra Goldina</li>
+                                            <li>Michael Lotter</li>
+                                            <li>Sebastian Lang</li>
+                                            <li>Devran Yildiz</li>
+                                            <li>Tobias Ostertag</li>
+                                            <li>Maximilian Ulrich</li>
+                                            <li>Melanie Walter</li>
+                                        </ul>
+                                        <b>How to cite</b><br/>
+                                        STRASSER, T., GOLDINA, A., LANG, S., LOTTER, M., ODER, M., OSTERTAG, T., ULRICH, M., WALTER, M., YILDIZ, D., PETERS, T. and ZRENNER, E. (2011),<br/>
+                                        ElVisWeb: An interactive web-application for the visualzation of ERG recordings based on the Electrophysiology of Vision Markup Language.<br/>
+                                        Acta Ophthalmologica, 89: 0. doi: 10.1111/j.1755-3768.2011.4328.x<br/><br/>
+                                        <b>Links</b><br/>
+                                        &raquo; <a href="http://www.w3.org/community/elvisml" target="_blank">W3C ElVisML community group</a><br/>
+                                        &raquo; <a href="http://www.biomed-engineering.de" target="_blank">Biomedical Engineering Group</a><br/>
+                                        &raquo; <a href="http://www.eye.uni-tuebingen.de" target="_blank">Institute for Ophthalmic Research, Centre for Ophthalmology, University of Tuebingen</a><br/>
+                                        &raquo; <a href="http://www.hs-augsburg.de/fakultaet/informatik/index.html" target="_blank">Faculty of Computer Science, University of Applied Sciences Augsburg</a><br/>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div id="patient" style="display:none">
+                <table border="0" cellpadding="0" cellspacing="0" width="100%" summary="">
+                    <tr>
+                        <td valign="top" align="center">
+                            <table border="0" cellpadding="5" cellspacing="0" width="994" summary="">
+                                <tr>
+                                    <td align="left" valign="top" class="ui-widget-content ui-corner-all">
+                                        <h3>Patient Information</h3>
+                                        <table border="0" cellpadding="2" cellspacing="0" summary="Patient Information">
+                                            <tr>
+                                                <td>Name:</td><td><div id="PatientName"></div></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Gender:</td><td><div id="PatientGender"></div></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Birthdate:</td><td><div id="PatientBirthdate"></div></td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                    <td width="10">&nbsp;</td>
+                                    <td align="left" valign="top" class="ui-widget-content ui-corner-all">
+                                        <h3>Recording Details</h3>
+                                        <table border="0" cellpadding="2" cellspacing="0" summary="Test Details">
+                                            <tr>
+                                                <td>Recording Date:</td><td><div id="RecordingDate"></div></td>
+                                            </tr>
+                                            <tr>
+                                                <td valign="top">Comments:</td><td><div id="RecordingComments"></div></td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td height="10">&nbsp;</td>
+                    </tr>
+                </table>
+            </div>
+        <div id="tabs" style="display:none; height:auto; overflow: hidden; width:994px;"><ul style="border-bottom-width:1px; border-bottom-style:solid; -moz-border-radius-bottomleft: 0px; -webkit-border-bottom-left-radius: 0px; border-bottom-left-radius: 0px; -moz-border-radius-bottomright: 0px; -webkit-border-bottom-right-radius: 0px; border-bottom-right-radius: 0px;"></ul>
+            <div id="non-printable" style="width:960px; padding-top: 10px;" align="right">
+                <a href="Print" onclick="window.print(); return false;"><img src="images/print.png" width="20" heigth="20" alt="Print this page" title="Print this page" border="0"/></a><img src="images/spacer.gif" width="21" heigth="20" alt="" title="" border="0"/>
+                <img src="images/spreadsheet.png" width="20" heigth="20" alt="Copy data to clipboard" title="Copy data to clipboard" border="0"/><img src="images/spacer.gif" width="21" heigth="20" alt="" title="" border="0"/>
+                <a href="Stimulation settings" onclick="return false;"><img src="images/bulb.png" width="20" heigth="20" alt="Show stimulation settings" title="Show stimulation settings" border="0"/></a><img src="images/spacer.gif" width="21" heigth="20" alt="" title="" border="0"/>
+                <a href="Acquisition settings" onclick="return false;"><img src="images/tape.png" width="20" heigth="20" alt="Show acquisition settings" title="Show acquisition settings" border="0"/></a>
+            </div>
+            <div id="tabContent" style="height:auto; overflow: hidden; width:984px; margin-top:30px; margin-bottom:20px; margin-left:10px;"></div></div>
+            <table border="0" cellpadding="0" cellspacing="0" width="100%" summary="">
+                <tr>
+                    <td height="30">&nbsp;</td>
+                </tr>
+                <tr>
+                    <td valign="top" align="center">
+                        <table border="0" cellpadding="10" cellspacing="0" width="994" class="ui-widget-content ui-corner-all">
+                            <tr>
+                                <td align="left">&raquo; <a href="Home" onclick="return gotoStart();">Start</a></td>
+                                <td align="left">&raquo; <a href="http://www.biomed-engineering.de" target="_blank">Biomedical Engineering Group</a></td>
+                                <td align="left">&raquo; <a href="Disclaimer" onclick="return gotoDisclaimer();">Disclaimer</a></td>
+                                <td align="left">&raquo; <a href="Info" onclick="return gotoInfo();">Info</a></td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+	</body>
+</html>
