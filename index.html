@@ -178,7 +178,7 @@
                   document.getElementById("PatientGender").innerHTML = getSubjectGender(subjectNode);
                   document.getElementById("PatientBirthdate").innerHTML = birthdate.format("mmmm dS, yyyy") + " (" + age + "y)";
                   
-                  document.getElementById("RecordingDate").innerHTML = recordingDate.format("mmmm dS, yyyy HH:mm");
+                  document.getElementById("RecordingDate").innerHTML = recordingDate.format("mmmm dS, yyyy HH:MM");
                   document.getElementById("RecordingComments").innerHTML = getRecordingComments(recodingSessionNode);
                   
                   var stepNode = getStepNodeByIndex(recodingSessionNode, 0);
