@@ -39,6 +39,17 @@ function getSubjectName(subjectNode) {
     return firstname + ' ' + lastname;
 }
 
+function getSubjectName4Step(elvisNode, stepNode) {
+    var path1 = "@subjectRef";
+    var subjectId = stepNode.parentNode.parentNode.selectSingleNode(path1).nodeValue;
+
+    var path3 = "/*/*/elvis:Subject[@id = '" + subjectId + "']";
+
+    var subjectNode = elvisNode.selectSingleNode(path3);
+    var subjectName = getSubjectName(subjectNode);
+    return subjectName;
+}
+
 function getSubjectBirthdate(subjectNode) {
     var path1 = "elvis:Birthdate/text()";
 
@@ -74,7 +85,7 @@ function getRecordingComments(recordingSessionNode) {
     for (i = 0; i < commentNodes.length; i++) {
         var commentNode = commentNodes[i];
         var creator = commentNode.selectSingleNode(path2).nodeValue;
-        var created = Date.parseIso8601(commentNode.selectSingleNode(path3).nodeValue).format("mmmm dS, yyyy HH:mm");
+        var created = Date.parseIso8601(commentNode.selectSingleNode(path3).nodeValue).format("mmmm dS, yyyy HH:MM");
         var text = commentNode.selectSingleNode(path4).nodeValue;
 
         commentString += text + " <i>(" + creator + ", " + created + ")</i>" + "\n";
@@ -92,6 +103,13 @@ function calcAge(birthdate, recordingdate) {
 function getProtocol(xmlDoc) {
     var path = "/elvis:ElVis/elvis:Protocols/elvis:Protocol[1]";
     return xmlDoc.selectNodes(path)[0];
+}
+
+function getProtocolName(elvisNode, stepNode) {
+  var stepDefinitionNode = getStepDefinition4Step(elvisNode, stepNode);
+  var protocolNode = stepDefinitionNode.parentNode.parentNode;
+  var protocolName = protocolNode.selectSingleNode("elvis:Name/text()").nodeValue;
+  return protocolName;
 }
 
 function getStepNames(protocolNode) {
@@ -253,6 +271,13 @@ function getChannelEye(elvisNode, channelNode) {
     return eye;
 }
 
+function getStepName(elvisNode, stepNode) {
+  var stepDefinitionNode = getStepDefinition4Step(elvisNode, stepNode);  
+  var path1 = "elvis:Name/text()";
+  var stepName = stepDefinitionNode.selectSingleNode(path1).nodeValue;
+  return stepName;
+}
+
 function string2floatArray(arrayString) {
     var array = arrayString.match(/-?\d+\.?\d*|"[^"]+"/g);
     for(var i = 0; i < array.length; i++) {
@@ -265,17 +290,24 @@ function string2floatArray(arrayString) {
 function convert(fromUnit, toUnit, value) {
     return value * UNIT_CONVERSION[fromUnit][toUnit];
 }
+var clipboardText;
 
 function createPlots(tabContent, elvisNode, stepNode) {
+    clipboardText = ['Protocol', 'Subject', 'DOE', 'comments', 'Step','Channel #','Eye','Cursor','Implicit time (ms)','amplitude (microVolt)'].join('\t');
+    
     plots.splice(0, plots.length);
     dataList.splice(0, dataList.length);
 
+    var subjectName = getSubjectName4Step(elvisNode, stepNode);
+    var comments = getRecordingComments(stepNode.parentNode.parentNode).replace('\n', ',');
+    var doe = getRecordingDate(stepNode.parentNode.parentNode).format("yyyy-mm-dd HH:MM Z");
+    var protocolName = getProtocolName(elvisNode, stepNode);
+    var stepName = getStepName(elvisNode, stepNode);
     var samplingRate = getSamplingRate(elvisNode, stepNode);
     var channelNodes = getChannelNodes(stepNode);
 
     var tabContentNode = document.getElementById(tabContent);
 
-    // remove previously created plots
     for (var i = 0; i < plots.length; i++) {
         plots[i].destroy();
     }
@@ -321,9 +353,22 @@ function createPlots(tabContent, elvisNode, stepNode) {
             plotContainer.style.width = "400px";
         }
 
-        var cursors = new Array(new Array('Title', 'ms', '&#956;V'));
+        var cursors = new Array(new Array('Cursor', 'ms', '&#956;V'));
         for (var i = 0; i < cursorCoordinates.length; i++) {
             cursors.push(new Array(cursorCoordinates[i][2], Math.round(cursorCoordinates[i][0]), Math.round(cursorCoordinates[i][1] * 10) / 10));
+            clipboardText += '\n';
+            clipboardText += [
+              '"' + protocolName + '"',
+              '"' + subjectName + '"',
+              doe,
+              '"' + comments + '"',
+              '"' + stepName + '"',
+              '"' + channelName + '"',
+              '"' + eye + '"',
+              '"' + cursorCoordinates[i][2] + '"',
+              Math.round(cursorCoordinates[i][0]),
+              (Math.round(cursorCoordinates[i][1] * 10) / 10)
+            ].join('\t');
         }
         $('div#cc' + j).arrayToTable(cursors, {tHeader: true, tCaption: false, tCaptionText: 'Captiontext.', columnFilter: false, rowCount: false});
 
