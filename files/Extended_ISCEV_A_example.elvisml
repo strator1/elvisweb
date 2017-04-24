@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<elvis:ElVis created="2011-06-15T02:27:07.140+01:00" creator="strasser" xmlns:dsig="http://www.w3.org/2000/09/xmldsig#" xmlns:elvis="http://www.iscev.org/ElVisML-v1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.iscev.org/ElVisML-v1 file:/C:/development/projects/promotion/elvisml/src/main/xsd/ElVisML-0.5.xsd">
+<elvis:ElVis created="2011-06-15T02:27:07.140+01:00" creator="strasser" xmlns:dsig="http://www.w3.org/2000/09/xmldsig#" xmlns:elvis="http://www.iscev.org/ElVisML-v1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.iscev.org/ElVisML-v1 https://strator1.github.io/elvisweb/files/ElVisML-0.5.xsd">
     <elvis:Subjects>
         <elvis:Subject id="S753172844" normal="false" externalIdentifier="4D48EDB1-7E4A-4383-8855-137A-12C2-8013">
             <elvis:Firstname>Jane</elvis:Firstname>
