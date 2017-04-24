@@ -1,0 +1,1729 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2013 (http://www.altova.com) by  () -->
+<xs:schema xmlns:elvis="http://www.iscev.org/ElVisML-v1" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:dsig="http://www.w3.org/2000/09/xmldsig#" xmlns:enc="http://www.w3.org/2001/04/xmlenc#" targetNamespace="http://www.iscev.org/ElVisML-v1" elementFormDefault="qualified" attributeFormDefault="unqualified" version="0" xml:lang="en">
+	<xs:import namespace="http://www.w3.org/2000/09/xmldsig#" schemaLocation="http://www.w3.org/TR/xmldsig-core/xmldsig-core-schema.xsd"/>
+	<xs:import namespace="http://www.w3.org/2001/04/xmlenc#" schemaLocation="http://www.w3.org/TR/xmlenc-core/xenc-schema.xsd"/>
+	<xs:element name="ElVis">
+		<xs:annotation>
+			<xs:documentation>Root element</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element name="Subjects" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Contains a list of one or mor subjects (e. g. patients). May be omited if only protocols should be transfered. Obligatory if one or more tests are transfered.</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:sequence minOccurs="1">
+							<xs:element name="Subject" maxOccurs="unbounded">
+								<xs:annotation>
+									<xs:documentation>Contains informations to a subject (e. g. patient) of a test. All child elements are optional. The id attribute must be set.</xs:documentation>
+								</xs:annotation>
+								<xs:complexType>
+									<xs:choice>
+										<xs:sequence>
+											<xs:element name="Lastname" type="xs:string" minOccurs="0">
+												<xs:annotation>
+													<xs:documentation>The last name of a subject</xs:documentation>
+												</xs:annotation>
+											</xs:element>
+											<xs:element name="Firstname" type="xs:string" minOccurs="0">
+												<xs:annotation>
+													<xs:documentation>The first name of a subject.</xs:documentation>
+												</xs:annotation>
+											</xs:element>
+											<xs:element name="Birthdate" type="xs:date" minOccurs="0">
+												<xs:annotation>
+													<xs:documentation>The date of birth of a subject</xs:documentation>
+												</xs:annotation>
+											</xs:element>
+											<xs:element name="Gender" minOccurs="0">
+												<xs:simpleType>
+													<xs:restriction base="xs:token">
+														<xs:enumeration value="male"/>
+														<xs:enumeration value="female"/>
+														<xs:enumeration value="unspecified"/>
+													</xs:restriction>
+												</xs:simpleType>
+											</xs:element>
+											<xs:element name="EyeColor" type="xs:token" minOccurs="0"/>
+											<xs:element name="EthnicOrigin" type="xs:token" minOccurs="0"/>
+											<xs:element name="ContactInformation" minOccurs="0">
+												<xs:annotation>
+													<xs:documentation>Contains informations of the address of a subject. All child elements are optional.</xs:documentation>
+												</xs:annotation>
+												<xs:complexType>
+													<xs:sequence>
+														<xs:element name="Street" type="xs:string" minOccurs="0">
+															<xs:annotation>
+																<xs:documentation>The street of the address of a subject</xs:documentation>
+															</xs:annotation>
+														</xs:element>
+														<xs:element name="ZipCode" type="xs:string" minOccurs="0">
+															<xs:annotation>
+																<xs:documentation>The zip code (postal code) of the address of a subject</xs:documentation>
+															</xs:annotation>
+														</xs:element>
+														<xs:element name="City" type="xs:string" minOccurs="0">
+															<xs:annotation>
+																<xs:documentation>The city of the address of a subject</xs:documentation>
+															</xs:annotation>
+														</xs:element>
+														<xs:element name="Country" type="xs:string" minOccurs="0">
+															<xs:annotation>
+																<xs:documentation>The country of the address of a subject</xs:documentation>
+															</xs:annotation>
+														</xs:element>
+														<xs:element name="Phone" type="xs:string" minOccurs="0">
+															<xs:annotation>
+																<xs:documentation>The phone number of a subject</xs:documentation>
+															</xs:annotation>
+														</xs:element>
+														<xs:element name="EMail" type="xs:string" minOccurs="0"/>
+													</xs:sequence>
+												</xs:complexType>
+											</xs:element>
+											<xs:element name="Notes" type="xs:string" minOccurs="0">
+												<xs:annotation>
+													<xs:documentation>Additional comments to a subject</xs:documentation>
+												</xs:annotation>
+											</xs:element>
+											<xs:element ref="elvis:CustomAttributes" minOccurs="0">
+												<xs:annotation>
+													<xs:documentation>May be used to store additional informations to the subject as a list of key value pairs.</xs:documentation>
+												</xs:annotation>
+											</xs:element>
+										</xs:sequence>
+										<xs:element ref="enc:EncryptedData"/>
+									</xs:choice>
+									<xs:attribute name="id" type="xs:NCName" use="required">
+										<xs:annotation>
+											<xs:documentation>Id which must be unique inside the document. Used to link a RecordingSession with a subject</xs:documentation>
+										</xs:annotation>
+									</xs:attribute>
+									<xs:attribute name="normal" type="xs:boolean" use="optional" default="false">
+										<xs:annotation>
+											<xs:documentation>Used to indicate wether this subject is a healthy or a control subject</xs:documentation>
+										</xs:annotation>
+									</xs:attribute>
+									<xs:attribute name="externalIdentifier" type="xs:string">
+										<xs:annotation>
+											<xs:documentation>Used for external IDs e. g. patient ID in a HIS</xs:documentation>
+										</xs:annotation>
+									</xs:attribute>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="Protocols" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Contains a list of one or more protocols. May be omited if only subject information is transfered. Obligatory if one or more tests is transfered.</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:sequence minOccurs="1">
+							<xs:element name="Protocol" maxOccurs="unbounded">
+								<xs:annotation>
+									<xs:documentation>A set of stimuli and recording settings used in a test</xs:documentation>
+								</xs:annotation>
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="Name" type="xs:string">
+											<xs:annotation>
+												<xs:documentation>The name of the protocol</xs:documentation>
+											</xs:annotation>
+										</xs:element>
+										<xs:element name="Type" type="xs:string" minOccurs="0"/>
+										<xs:element name="Description" type="xs:string" minOccurs="0">
+											<xs:annotation>
+												<xs:documentation>Description of the protocol</xs:documentation>
+											</xs:annotation>
+										</xs:element>
+										<xs:element name="Notes" type="xs:string" minOccurs="0"/>
+										<xs:element name="StimulusDevice" type="xs:string" minOccurs="0">
+											<xs:annotation>
+												<xs:documentation>Used as a hint which device should be used for stimulation, e. g. Ganzfeld, Mini-Ganzfeld, ...</xs:documentation>
+											</xs:annotation>
+										</xs:element>
+										<xs:element name="Electrodes" minOccurs="0">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="Electrode" minOccurs="2" maxOccurs="unbounded">
+														<xs:complexType>
+															<xs:sequence>
+																<xs:element name="Name" type="xs:token"/>
+																<xs:element name="Type" minOccurs="0">
+																	<xs:simpleType>
+																		<xs:restriction base="xs:token">
+																			<xs:enumeration value="Gold Lens"/>
+																			<xs:enumeration value="Burian-Allen"/>
+																			<xs:enumeration value="DTL"/>
+																			<xs:enumeration value="Gold Leaf"/>
+																			<xs:enumeration value="Jet"/>
+																			<xs:enumeration value="Skin"/>
+																			<xs:enumeration value="Cup"/>
+																			<xs:enumeration value="Other"/>
+																		</xs:restriction>
+																	</xs:simpleType>
+																</xs:element>
+																<xs:element name="Position" type="xs:string" minOccurs="0"/>
+																<xs:element ref="elvis:CustomAttributes" minOccurs="0">
+																	<xs:annotation>
+																		<xs:documentation>additional information for the electrode</xs:documentation>
+																	</xs:annotation>
+																</xs:element>
+															</xs:sequence>
+															<xs:attribute name="id" type="xs:NCName" use="required"/>
+														</xs:complexType>
+													</xs:element>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="Leads" minOccurs="0">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="Lead" maxOccurs="unbounded">
+														<xs:complexType>
+															<xs:sequence>
+																<xs:element name="Name" type="xs:token" minOccurs="0"/>
+																<xs:element name="Electrodes" minOccurs="0">
+																	<xs:complexType>
+																		<xs:sequence>
+																			<xs:element name="Electrode" maxOccurs="unbounded">
+																				<xs:complexType>
+																					<xs:attribute name="ref" type="xs:NCName" use="required"/>
+																				</xs:complexType>
+																			</xs:element>
+																		</xs:sequence>
+																	</xs:complexType>
+																</xs:element>
+															</xs:sequence>
+															<xs:attribute name="id" type="xs:NCName" use="required"/>
+														</xs:complexType>
+													</xs:element>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="SequenceDefinition" minOccurs="0">
+											<xs:annotation>
+												<xs:documentation>Contains a list of one or more steps the protocol consists of</xs:documentation>
+											</xs:annotation>
+											<xs:complexType>
+												<xs:sequence minOccurs="0">
+													<xs:element name="StepDefinition" maxOccurs="unbounded">
+														<xs:annotation>
+															<xs:documentation>Contains settings for a specific step like stimulus and acquisition parameters</xs:documentation>
+														</xs:annotation>
+														<xs:complexType>
+															<xs:sequence>
+																<xs:element name="Name" type="xs:string">
+																	<xs:annotation>
+																		<xs:documentation>Name of the step</xs:documentation>
+																	</xs:annotation>
+																</xs:element>
+																<xs:element name="AdaptationTime" minOccurs="0">
+																	<xs:annotation>
+																		<xs:documentation>Time to wait before starting to record results</xs:documentation>
+																	</xs:annotation>
+																	<xs:complexType>
+																		<xs:simpleContent>
+																			<xs:extension base="elvis:MeasurementType">
+																				<xs:attribute name="type">
+																					<xs:simpleType>
+																						<xs:restriction base="xs:token">
+																							<xs:enumeration value="dark"/>
+																							<xs:enumeration value="light"/>
+																						</xs:restriction>
+																					</xs:simpleType>
+																				</xs:attribute>
+																			</xs:extension>
+																		</xs:simpleContent>
+																	</xs:complexType>
+																</xs:element>
+																<xs:element name="AcquisitionSettings" minOccurs="1">
+																	<xs:complexType>
+																		<xs:sequence>
+																			<xs:element name="PreTriggerTime" minOccurs="0">
+																				<xs:annotation>
+																					<xs:documentation>Duration to record signals before trigger (stimuls). Used for e. g. auto-zero</xs:documentation>
+																				</xs:annotation>
+																				<xs:complexType>
+																					<xs:simpleContent>
+																						<xs:extension base="elvis:MeasurementType"/>
+																					</xs:simpleContent>
+																				</xs:complexType>
+																			</xs:element>
+																			<xs:element name="PostTriggerTime" minOccurs="0">
+																				<xs:annotation>
+																					<xs:documentation>Duration to record signals after the trigger</xs:documentation>
+																				</xs:annotation>
+																				<xs:complexType>
+																					<xs:simpleContent>
+																						<xs:extension base="elvis:MeasurementType"/>
+																					</xs:simpleContent>
+																				</xs:complexType>
+																			</xs:element>
+																			<xs:element name="SamplingRate" minOccurs="0">
+																				<xs:annotation>
+																					<xs:documentation>Defines the number of samples per second.</xs:documentation>
+																				</xs:annotation>
+																				<xs:complexType>
+																					<xs:simpleContent>
+																						<xs:extension base="elvis:MeasurementType"/>
+																					</xs:simpleContent>
+																				</xs:complexType>
+																			</xs:element>
+																			<xs:element name="NumberOfAverages" type="xs:positiveInteger" default="1" minOccurs="0">
+																				<xs:annotation>
+																					<xs:documentation>Number of results that should be recorded</xs:documentation>
+																				</xs:annotation>
+																			</xs:element>
+																			<xs:element name="InterAverageDelay" type="elvis:MeasurementType" minOccurs="0">
+																				<xs:annotation>
+																					<xs:documentation>Time between two averages</xs:documentation>
+																				</xs:annotation>
+																			</xs:element>
+																			<xs:element name="SamplesPerAverage" type="xs:positiveInteger" default="1" minOccurs="0">
+																				<xs:annotation>
+																					<xs:documentation>Mininum number of sweeps per average</xs:documentation>
+																				</xs:annotation>
+																			</xs:element>
+																			<xs:element name="InterSampleDelay" minOccurs="0">
+																				<xs:annotation>
+																					<xs:documentation>Time between two sweeps</xs:documentation>
+																				</xs:annotation>
+																				<xs:complexType>
+																					<xs:simpleContent>
+																						<xs:extension base="elvis:MeasurementType"/>
+																					</xs:simpleContent>
+																				</xs:complexType>
+																			</xs:element>
+																		</xs:sequence>
+																	</xs:complexType>
+																</xs:element>
+																<xs:element name="Stimulus" minOccurs="0">
+																	<xs:annotation>
+																		<xs:documentation>Settings of the stimulus used for a step</xs:documentation>
+																	</xs:annotation>
+																	<xs:complexType>
+																		<xs:choice>
+																			<xs:element name="ERG" minOccurs="0">
+																				<xs:annotation>
+																					<xs:documentation>Electroretinogram</xs:documentation>
+																				</xs:annotation>
+																				<xs:complexType>
+																					<xs:choice>
+																						<xs:element name="Flicker" minOccurs="0">
+																							<xs:complexType>
+																								<xs:sequence>
+																									<xs:element name="FlashFrequency" minOccurs="0">
+																										<xs:annotation>
+																											<xs:documentation>If continous stimulation (flicker ERG) is used, defines the frequency of the flicker</xs:documentation>
+																										</xs:annotation>
+																										<xs:complexType>
+																											<xs:simpleContent>
+																												<xs:extension base="elvis:MeasurementType"/>
+																											</xs:simpleContent>
+																										</xs:complexType>
+																									</xs:element>
+																									<xs:group ref="elvis:stimulusGroup"/>
+																									<xs:element ref="elvis:CustomAttributes" minOccurs="0">
+																										<xs:annotation>
+																											<xs:documentation>Additional informations about the stimulus</xs:documentation>
+																										</xs:annotation>
+																									</xs:element>
+																								</xs:sequence>
+																							</xs:complexType>
+																						</xs:element>
+																						<xs:element name="Flash" minOccurs="0" maxOccurs="unbounded">
+																							<xs:complexType>
+																								<xs:sequence>
+																									<xs:element name="InterStimulusInterval" type="elvis:MeasurementType" minOccurs="0">
+																										<xs:annotation>
+																											<xs:documentation>Time before flash</xs:documentation>
+																										</xs:annotation>
+																									</xs:element>
+																									<xs:group ref="elvis:stimulusGroup"/>
+																									<xs:element ref="elvis:CustomAttributes" minOccurs="0">
+																										<xs:annotation>
+																											<xs:documentation>Additional informations about the stimulus</xs:documentation>
+																										</xs:annotation>
+																									</xs:element>
+																								</xs:sequence>
+																							</xs:complexType>
+																						</xs:element>
+																					</xs:choice>
+																				</xs:complexType>
+																			</xs:element>
+																			<xs:element name="MultifocalERG" minOccurs="0">
+																				<xs:annotation>
+																					<xs:documentation>Multifocal Electroretinogram</xs:documentation>
+																				</xs:annotation>
+																				<xs:complexType>
+																					<xs:sequence>
+																						<xs:element name="StimulusSize" type="elvis:MeasurementType">
+																							<xs:annotation>
+																								<xs:documentation>Size of the stimulus in degrees</xs:documentation>
+																							</xs:annotation>
+																						</xs:element>
+																						<xs:element name="NumberOfHexagons" type="xs:int">
+																							<xs:annotation>
+																								<xs:documentation>The number of the hexagons</xs:documentation>
+																							</xs:annotation>
+																						</xs:element>
+																						<xs:element name="Contrast" type="xs:double">
+																							<xs:annotation>
+																								<xs:documentation>The contrast</xs:documentation>
+																							</xs:annotation>
+																						</xs:element>
+																						<xs:element name="StimulusStrength">
+																							<xs:annotation>
+																								<xs:documentation>The stimulus intensity of black and white hexagons</xs:documentation>
+																							</xs:annotation>
+																							<xs:complexType>
+																								<xs:sequence>
+																									<xs:element name="Black" type="elvis:MeasurementType"/>
+																									<xs:element name="White" type="elvis:MeasurementType"/>
+																								</xs:sequence>
+																							</xs:complexType>
+																						</xs:element>
+																						<xs:element name="BackgroundIntensity">
+																							<xs:annotation>
+																								<xs:documentation>The background intensity</xs:documentation>
+																							</xs:annotation>
+																							<xs:complexType>
+																								<xs:simpleContent>
+																									<xs:extension base="elvis:MeasurementType"/>
+																								</xs:simpleContent>
+																							</xs:complexType>
+																						</xs:element>
+																						<xs:element name="MSequenceIterations" type="xs:int">
+																							<xs:annotation>
+																								<xs:documentation>The number of iterations of the m-Sequence</xs:documentation>
+																							</xs:annotation>
+																						</xs:element>
+																						<xs:element name="Fixation" type="xs:boolean"/>
+																						<xs:element ref="elvis:CustomAttributes">
+																							<xs:annotation>
+																								<xs:documentation>Additional informations about the stimulus</xs:documentation>
+																							</xs:annotation>
+																						</xs:element>
+																					</xs:sequence>
+																				</xs:complexType>
+																			</xs:element>
+																			<xs:element name="EOG" minOccurs="0">
+																				<xs:annotation>
+																					<xs:documentation>Electrooculogram</xs:documentation>
+																				</xs:annotation>
+																				<xs:complexType>
+																					<xs:sequence>
+																						<xs:element name="Angle" type="elvis:MeasurementArrayType" minOccurs="0"/>
+																						<xs:element name="ReversalFrequency" type="elvis:MeasurementType"/>
+																						<xs:element name="StimulusStrength" type="elvis:MeasurementType"/>
+																						<xs:element name="BackgroundLuminance">
+																							<xs:annotation>
+																								<xs:documentation>The background intensity</xs:documentation>
+																							</xs:annotation>
+																							<xs:complexType>
+																								<xs:simpleContent>
+																									<xs:extension base="elvis:MeasurementType"/>
+																								</xs:simpleContent>
+																							</xs:complexType>
+																						</xs:element>
+																						<xs:element name="BackgroundColor" type="xs:token">
+																							<xs:annotation>
+																								<xs:documentation>The color of the background ilumination</xs:documentation>
+																							</xs:annotation>
+																						</xs:element>
+																						<xs:element name="AudibleIndicator" type="xs:boolean"/>
+																						<xs:element ref="elvis:CustomAttributes" minOccurs="0">
+																							<xs:annotation>
+																								<xs:documentation>Additional informations about the stimulus</xs:documentation>
+																							</xs:annotation>
+																						</xs:element>
+																					</xs:sequence>
+																				</xs:complexType>
+																			</xs:element>
+																			<xs:element name="PatternERG" minOccurs="0">
+																				<xs:complexType>
+																					<xs:sequence>
+																						<xs:element name="Refraction" minOccurs="0">
+																							<xs:annotation>
+																								<xs:documentation>????</xs:documentation>
+																							</xs:annotation>
+																							<xs:complexType>
+																								<xs:sequence>
+																									<xs:element name="OD" type="elvis:MeasurementType"/>
+																									<xs:element name="OS" type="elvis:MeasurementType"/>
+																								</xs:sequence>
+																							</xs:complexType>
+																						</xs:element>
+																						<xs:element name="Distance" type="elvis:MeasurementType">
+																							<xs:annotation>
+																								<xs:documentation>The distance to the stimulus</xs:documentation>
+																							</xs:annotation>
+																						</xs:element>
+																						<xs:element name="PatternType" type="xs:token">
+																							<xs:annotation>
+																								<xs:documentation>The type of pattern used for stimulation (e. g. checker board)</xs:documentation>
+																							</xs:annotation>
+																						</xs:element>
+																						<xs:element name="SpatialFrequency" type="elvis:MeasurementType">
+																							<xs:annotation>
+																								<xs:documentation>The spatial frequency of the stimulus</xs:documentation>
+																							</xs:annotation>
+																						</xs:element>
+																						<xs:element name="FieldSize" type="elvis:MeasurementType">
+																							<xs:annotation>
+																								<xs:documentation>The field size of the stimulus</xs:documentation>
+																							</xs:annotation>
+																						</xs:element>
+																						<xs:element name="Contrast" type="xs:double">
+																							<xs:annotation>
+																								<xs:documentation>The contrast of the stimulus</xs:documentation>
+																							</xs:annotation>
+																						</xs:element>
+																						<xs:element name="Intensity" type="elvis:MeasurementType">
+																							<xs:annotation>
+																								<xs:documentation>The intensity of the stimulus</xs:documentation>
+																							</xs:annotation>
+																						</xs:element>
+																						<xs:element name="AmbientLumiance" type="elvis:MeasurementType" minOccurs="0">
+																							<xs:annotation>
+																								<xs:documentation>The intensity of the ambient luminance</xs:documentation>
+																							</xs:annotation>
+																						</xs:element>
+																						<xs:element ref="elvis:CustomAttributes" minOccurs="0">
+																							<xs:annotation>
+																								<xs:documentation>Additional informations about the stimulus</xs:documentation>
+																							</xs:annotation>
+																						</xs:element>
+																					</xs:sequence>
+																				</xs:complexType>
+																			</xs:element>
+																			<xs:element name="VEP" type="xs:anyType" minOccurs="0">
+																				<xs:annotation>
+																					<xs:documentation>Visual evoked potentials</xs:documentation>
+																				</xs:annotation>
+																			</xs:element>
+																			<xs:element name="Extern" type="xs:anyType" minOccurs="0"/>
+																			<xs:element name="Other" type="xs:anyType" minOccurs="0"/>
+																		</xs:choice>
+																	</xs:complexType>
+																</xs:element>
+																<xs:element name="ChannelDefinitions" minOccurs="0">
+																	<xs:annotation>
+																		<xs:documentation>Contains a list of one or more channels used for recording</xs:documentation>
+																	</xs:annotation>
+																	<xs:complexType>
+																		<xs:sequence>
+																			<xs:element name="ChannelDefinition" maxOccurs="unbounded">
+																				<xs:annotation>
+																					<xs:documentation>Settings for a specific channel</xs:documentation>
+																				</xs:annotation>
+																				<xs:complexType>
+																					<xs:sequence minOccurs="0">
+																						<xs:element name="Name" type="xs:string" minOccurs="0">
+																							<xs:annotation>
+																								<xs:documentation>The name of the channel</xs:documentation>
+																							</xs:annotation>
+																						</xs:element>
+																						<xs:element name="Eye" minOccurs="0">
+																							<xs:annotation>
+																								<xs:documentation>The eye the channel records from</xs:documentation>
+																							</xs:annotation>
+																							<xs:simpleType>
+																								<xs:restriction base="xs:token">
+																									<xs:enumeration value="OD"/>
+																									<xs:enumeration value="OS"/>
+																									<xs:enumeration value="BOTH"/>
+																									<xs:enumeration value="NONE"/>
+																								</xs:restriction>
+																							</xs:simpleType>
+																						</xs:element>
+																						<xs:element name="Filter" minOccurs="0">
+																							<xs:complexType>
+																								<xs:sequence>
+																									<xs:element name="NotchFilter" type="elvis:MeasurementType" minOccurs="0">
+																										<xs:annotation>
+																											<xs:documentation>Notch filter for removing noise caused by mains frequency</xs:documentation>
+																										</xs:annotation>
+																									</xs:element>
+																									<xs:element name="FrequencyFilter" minOccurs="0" maxOccurs="1">
+																										<xs:annotation>
+																											<xs:documentation>Defines a frequency filter</xs:documentation>
+																										</xs:annotation>
+																										<xs:complexType>
+																											<xs:sequence>
+																												<xs:element name="LowCutOffFrequency" type="elvis:MeasurementType" minOccurs="0">
+																													<xs:annotation>
+																														<xs:documentation>The low cut off frequency</xs:documentation>
+																													</xs:annotation>
+																												</xs:element>
+																												<xs:element name="HighCutOffFrequency" type="elvis:MeasurementType" minOccurs="0">
+																													<xs:annotation>
+																														<xs:documentation>the high cut off frequency</xs:documentation>
+																													</xs:annotation>
+																												</xs:element>
+																											</xs:sequence>
+																											<xs:attribute name="type" default="bandpass">
+																												<xs:simpleType>
+																													<xs:restriction base="xs:token">
+																														<xs:enumeration value="bandpass"/>
+																														<xs:enumeration value="bandstop"/>
+																														<xs:enumeration value="other"/>
+																													</xs:restriction>
+																												</xs:simpleType>
+																											</xs:attribute>
+																										</xs:complexType>
+																									</xs:element>
+																									<xs:element ref="elvis:CustomAttributes" minOccurs="0">
+																										<xs:annotation>
+																											<xs:documentation>additional information for the channel definition</xs:documentation>
+																										</xs:annotation>
+																									</xs:element>
+																								</xs:sequence>
+																							</xs:complexType>
+																						</xs:element>
+																						<xs:element name="Processing" minOccurs="0">
+																							<xs:annotation>
+																								<xs:documentation>Filter applied to the signal during recording</xs:documentation>
+																							</xs:annotation>
+																							<xs:complexType>
+																								<xs:sequence>
+																									<xs:element name="BaselineRemoval" minOccurs="0">
+																										<xs:annotation>
+																											<xs:documentation>Auto-Zero filter for removing a DC component from the signal. By using the average of a period of time (usually during preTrigger)</xs:documentation>
+																										</xs:annotation>
+																										<xs:complexType>
+																											<xs:sequence>
+																												<xs:element ref="elvis:CustomAttributes"/>
+																											</xs:sequence>
+																										</xs:complexType>
+																									</xs:element>
+																									<xs:element name="ArtefactRejection" minOccurs="0">
+																										<xs:annotation>
+																											<xs:documentation>If artefact rejection was turned on during recording</xs:documentation>
+																										</xs:annotation>
+																										<xs:complexType>
+																											<xs:sequence>
+																												<xs:element ref="elvis:CustomAttributes"/>
+																											</xs:sequence>
+																										</xs:complexType>
+																									</xs:element>
+																									<xs:element name="TrendRemoval" minOccurs="0">
+																										<xs:annotation>
+																											<xs:documentation>Trend removal filter for removing DC drift</xs:documentation>
+																										</xs:annotation>
+																										<xs:complexType>
+																											<xs:sequence>
+																												<xs:element ref="elvis:CustomAttributes"/>
+																											</xs:sequence>
+																										</xs:complexType>
+																									</xs:element>
+																									<xs:element ref="elvis:CustomAttributes" minOccurs="0">
+																										<xs:annotation>
+																											<xs:documentation>additional information for the channel definition</xs:documentation>
+																										</xs:annotation>
+																									</xs:element>
+																								</xs:sequence>
+																							</xs:complexType>
+																						</xs:element>
+																						<xs:element ref="elvis:CustomAttributes" minOccurs="0">
+																							<xs:annotation>
+																								<xs:documentation>additional information for the channel definition</xs:documentation>
+																							</xs:annotation>
+																						</xs:element>
+																					</xs:sequence>
+																					<xs:attribute name="id" type="xs:NCName" use="required"/>
+																					<xs:attribute name="leadRef" type="xs:NCName" use="optional"/>
+																				</xs:complexType>
+																			</xs:element>
+																		</xs:sequence>
+																	</xs:complexType>
+																</xs:element>
+																<xs:element name="CursorDefinitions" minOccurs="0">
+																	<xs:annotation>
+																		<xs:documentation>Contains a list of one or more marker definitons</xs:documentation>
+																	</xs:annotation>
+																	<xs:complexType>
+																		<xs:sequence>
+																			<xs:element name="CursorDefinition" maxOccurs="unbounded">
+																				<xs:annotation>
+																					<xs:documentation>Settings for markers applied to the measured signal (e. g. a-wave, b-wave)</xs:documentation>
+																				</xs:annotation>
+																				<xs:complexType>
+																					<xs:sequence>
+																						<xs:element name="Name" type="xs:string">
+																							<xs:annotation>
+																								<xs:documentation>The title of the annotation (e. g. "A")</xs:documentation>
+																							</xs:annotation>
+																						</xs:element>
+																						<xs:element name="Placement" minOccurs="0">
+																							<xs:annotation>
+																								<xs:documentation>A range can be specified for automatic placement of this marker</xs:documentation>
+																							</xs:annotation>
+																							<xs:complexType>
+																								<xs:sequence>
+																									<xs:element name="Start" type="elvis:MeasurementType">
+																										<xs:annotation>
+																											<xs:documentation>The start time for the automatic placment of the marker</xs:documentation>
+																										</xs:annotation>
+																									</xs:element>
+																									<xs:element name="Range" type="elvis:MeasurementType">
+																										<xs:annotation>
+																											<xs:documentation>The range for the automatic placement of the marker</xs:documentation>
+																										</xs:annotation>
+																									</xs:element>
+																									<xs:element name="Type">
+																										<xs:annotation>
+																											<xs:documentation>The type of the marker</xs:documentation>
+																										</xs:annotation>
+																										<xs:simpleType>
+																											<xs:restriction base="xs:token">
+																												<xs:enumeration value="max"/>
+																												<xs:enumeration value="min"/>
+																											</xs:restriction>
+																										</xs:simpleType>
+																									</xs:element>
+																								</xs:sequence>
+																							</xs:complexType>
+																						</xs:element>
+																						<xs:element name="Calculation" minOccurs="0">
+																							<xs:complexType>
+																								<xs:sequence>
+																									<xs:element name="RelativeValue" minOccurs="0">
+																										<xs:complexType>
+																											<xs:all>
+																												<xs:element name="XValue" minOccurs="0">
+																													<xs:complexType>
+																														<xs:attribute name="cursorDefinitionRef" type="xs:NCName" use="required"/>
+																													</xs:complexType>
+																												</xs:element>
+																												<xs:element name="YValue" minOccurs="0">
+																													<xs:complexType>
+																														<xs:attribute name="cursorDefinitionRef" type="xs:NCName" use="required"/>
+																													</xs:complexType>
+																												</xs:element>
+																											</xs:all>
+																										</xs:complexType>
+																									</xs:element>
+																									<xs:element ref="elvis:CustomAttributes" minOccurs="0"/>
+																								</xs:sequence>
+																							</xs:complexType>
+																						</xs:element>
+																						<xs:element name="ChannelDefinitions">
+																							<xs:annotation>
+																								<xs:documentation>The channels this marker applies to</xs:documentation>
+																							</xs:annotation>
+																							<xs:complexType>
+																								<xs:sequence>
+																									<xs:element name="ChannelDefinition" maxOccurs="unbounded">
+																										<xs:complexType>
+																											<xs:attribute name="ref" type="xs:NCName" use="required"/>
+																										</xs:complexType>
+																									</xs:element>
+																								</xs:sequence>
+																							</xs:complexType>
+																						</xs:element>
+																						<xs:element ref="elvis:CustomAttributes" minOccurs="0"/>
+																					</xs:sequence>
+																					<xs:attribute name="id" type="xs:NCName" use="required">
+																						<xs:annotation>
+																							<xs:documentation>Id which must be unique within the document. Used to reference from actual markers to marker definitions</xs:documentation>
+																						</xs:annotation>
+																					</xs:attribute>
+																				</xs:complexType>
+																			</xs:element>
+																		</xs:sequence>
+																	</xs:complexType>
+																</xs:element>
+																<xs:element name="ParameterDefinitions" minOccurs="0">
+																	<xs:complexType>
+																		<xs:sequence>
+																			<xs:element name="ParameterDefinition" maxOccurs="unbounded">
+																				<xs:annotation>
+																					<xs:documentation>Settings for parameters  ususally calculated of markers (e. g. a-wave-slope, b-a-amplitude ratio)</xs:documentation>
+																				</xs:annotation>
+																				<xs:complexType>
+																					<xs:sequence>
+																						<xs:element name="Name" type="xs:string">
+																							<xs:annotation>
+																								<xs:documentation>The title of this parameter (e. g. b/a ratio)</xs:documentation>
+																							</xs:annotation>
+																						</xs:element>
+																						<xs:element name="Description" type="xs:string" minOccurs="0"/>
+																						<xs:element name="ChannelDefinitions" minOccurs="0">
+																							<xs:annotation>
+																								<xs:documentation>The channels this parameter applies to</xs:documentation>
+																							</xs:annotation>
+																							<xs:complexType>
+																								<xs:sequence>
+																									<xs:element name="ChannelDefinition" maxOccurs="unbounded">
+																										<xs:complexType>
+																											<xs:attribute name="ref" type="xs:NCName" use="required"/>
+																										</xs:complexType>
+																									</xs:element>
+																								</xs:sequence>
+																							</xs:complexType>
+																						</xs:element>
+																						<xs:element name="CursorDefinitions" minOccurs="0">
+																							<xs:annotation>
+																								<xs:documentation>The annotations this parameter is calculated of</xs:documentation>
+																							</xs:annotation>
+																							<xs:complexType>
+																								<xs:sequence>
+																									<xs:element name="CursorDefinition" maxOccurs="unbounded">
+																										<xs:complexType>
+																											<xs:attribute name="ref" type="xs:NCName" use="required"/>
+																										</xs:complexType>
+																									</xs:element>
+																								</xs:sequence>
+																							</xs:complexType>
+																						</xs:element>
+																						<xs:element ref="elvis:CustomAttributes" minOccurs="0"/>
+																					</xs:sequence>
+																					<xs:attribute name="id" type="xs:NCName" use="required">
+																						<xs:annotation>
+																							<xs:documentation>Id which must be unique within the document. Used to reference from actual parameters to parameter definitions</xs:documentation>
+																						</xs:annotation>
+																					</xs:attribute>
+																				</xs:complexType>
+																			</xs:element>
+																		</xs:sequence>
+																	</xs:complexType>
+																</xs:element>
+																<xs:element ref="elvis:CustomAttributes" minOccurs="0">
+																	<xs:annotation>
+																		<xs:documentation>Additinal information for a step</xs:documentation>
+																	</xs:annotation>
+																</xs:element>
+															</xs:sequence>
+															<xs:attribute name="id" type="xs:NCName" use="required">
+																<xs:annotation>
+																	<xs:documentation>Id which must be unique within the document. Used to reference from actual steps to step definitions</xs:documentation>
+																</xs:annotation>
+															</xs:attribute>
+															<xs:attribute name="optional" type="xs:boolean"/>
+														</xs:complexType>
+													</xs:element>
+												</xs:sequence>
+												<xs:attribute name="fixedOrder" type="xs:boolean"/>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="ParameterDefinitions" minOccurs="0">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="ParameterDefinition" maxOccurs="unbounded">
+														<xs:annotation>
+															<xs:documentation>Settings for parameters  ususally calculated of markers (e. g. a-wave-slope, b-a-amplitude ratio)</xs:documentation>
+														</xs:annotation>
+														<xs:complexType>
+															<xs:sequence>
+																<xs:element name="Name" type="xs:string">
+																	<xs:annotation>
+																		<xs:documentation>The title of this parameter (e. g. b/a ratio)</xs:documentation>
+																	</xs:annotation>
+																</xs:element>
+																<xs:element name="Description" type="xs:string" minOccurs="0"/>
+																<xs:element name="StepDefinitions" minOccurs="0">
+																	<xs:complexType>
+																		<xs:sequence>
+																			<xs:element name="StepDefinition" maxOccurs="unbounded">
+																				<xs:complexType>
+																					<xs:attribute name="ref" type="xs:NCName" use="required"/>
+																				</xs:complexType>
+																			</xs:element>
+																		</xs:sequence>
+																	</xs:complexType>
+																</xs:element>
+																<xs:element name="ChannelDefinitions" minOccurs="0">
+																	<xs:annotation>
+																		<xs:documentation>The channels this parameter applies to</xs:documentation>
+																	</xs:annotation>
+																	<xs:complexType>
+																		<xs:sequence>
+																			<xs:element name="ChannelDefinition" maxOccurs="unbounded">
+																				<xs:complexType>
+																					<xs:attribute name="ref" type="xs:NCName" use="required"/>
+																				</xs:complexType>
+																			</xs:element>
+																		</xs:sequence>
+																	</xs:complexType>
+																</xs:element>
+																<xs:element name="CursorDefinitions" minOccurs="0">
+																	<xs:annotation>
+																		<xs:documentation>The annotations this parameter is calculated of</xs:documentation>
+																	</xs:annotation>
+																	<xs:complexType>
+																		<xs:sequence>
+																			<xs:element name="CursorDefinition" maxOccurs="unbounded">
+																				<xs:complexType>
+																					<xs:attribute name="ref" type="xs:NCName" use="required"/>
+																				</xs:complexType>
+																			</xs:element>
+																		</xs:sequence>
+																	</xs:complexType>
+																</xs:element>
+																<xs:element ref="elvis:CustomAttributes" minOccurs="0"/>
+															</xs:sequence>
+															<xs:attribute name="id" type="xs:NCName" use="required">
+																<xs:annotation>
+																	<xs:documentation>Id which must be unique within the document. Used to reference from actual parameters to parameter definitions</xs:documentation>
+																</xs:annotation>
+															</xs:attribute>
+														</xs:complexType>
+													</xs:element>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+										<xs:element ref="elvis:CustomAttributes" minOccurs="0">
+											<xs:annotation>
+												<xs:documentation>Additional information about the protocol</xs:documentation>
+											</xs:annotation>
+										</xs:element>
+									</xs:sequence>
+									<xs:attribute name="id" type="xs:NCName" use="required">
+										<xs:annotation>
+											<xs:documentation>Id which must be unique within the document. Used to reference from tests to protocols</xs:documentation>
+										</xs:annotation>
+									</xs:attribute>
+									<xs:attribute name="externalIdentifier" type="xs:string">
+										<xs:annotation>
+											<xs:documentation>Used for external IDs e. g. patient ID in a HIS</xs:documentation>
+										</xs:annotation>
+									</xs:attribute>
+								</xs:complexType>
+								<xs:key name="ElectrodeKey">
+									<xs:selector xpath="elvis:Electrodes/elvis:Electrode"/>
+									<xs:field xpath="@id"/>
+								</xs:key>
+								<xs:keyref name="Lead2ElectrodeKeyRef" refer="elvis:ElectrodeKey">
+									<xs:selector xpath="elvis:Leads/elvis:Lead/elvis:Electrodes/elvis:Electrode"/>
+									<xs:field xpath="@ref"/>
+								</xs:keyref>
+								<xs:key name="LeadKey">
+									<xs:selector xpath="elvis:Leads/elvis:Lead"/>
+									<xs:field xpath="@id"/>
+								</xs:key>
+								<xs:keyref name="ChannelDefinition2LeadKeyRef" refer="elvis:LeadKey">
+									<xs:selector xpath="elvis:SequenceDefinition/elvis:StepDefinition/elvis:ChannelDefinitions/elvis:ChannelDefinition"/>
+									<xs:field xpath="@leadRef"/>
+								</xs:keyref>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="RecordingSessions" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Contains a list of one or more tests</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:sequence minOccurs="1">
+							<xs:element name="RecordingSession" maxOccurs="unbounded">
+								<xs:annotation>
+									<xs:documentation>A test containing recordings according to a defined protocol</xs:documentation>
+								</xs:annotation>
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="RecordingDate" type="xs:dateTime">
+											<xs:annotation>
+												<xs:documentation>The date and time the test was recorded</xs:documentation>
+											</xs:annotation>
+										</xs:element>
+										<xs:element name="Investigator" type="xs:string" minOccurs="0"/>
+										<xs:element name="RecordingDevice">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="DeviceName" type="xs:string" nillable="false"/>
+													<xs:element name="Model" type="xs:string" minOccurs="0"/>
+													<xs:element name="SoftwareVersion" type="xs:string" minOccurs="0"/>
+													<xs:element name="Manufacturer" type="xs:string" minOccurs="0"/>
+													<xs:element ref="elvis:CustomAttributes" minOccurs="0"/>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="TrialIdentifiers" minOccurs="0">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="ISRCTN" type="xs:string" minOccurs="0"/>
+													<xs:element name="StudyId" type="xs:string" minOccurs="0"/>
+													<xs:element name="SiteId" type="xs:string" minOccurs="0"/>
+													<xs:element name="TreatmentCode" type="xs:string" minOccurs="0"/>
+													<xs:element name="TreatmentGroup" type="xs:string" minOccurs="0"/>
+													<xs:element ref="elvis:CustomAttributes" minOccurs="0">
+														<xs:annotation>
+															<xs:documentation>Additional information about the protocol</xs:documentation>
+														</xs:annotation>
+													</xs:element>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="PupilDiameter" minOccurs="0">
+											<xs:annotation>
+												<xs:documentation>The diameter of the pupil before the test</xs:documentation>
+											</xs:annotation>
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="OD" type="elvis:MeasurementType" minOccurs="0">
+														<xs:annotation>
+															<xs:documentation>The value of the right eye</xs:documentation>
+														</xs:annotation>
+													</xs:element>
+													<xs:element name="OS" type="elvis:MeasurementType" minOccurs="0">
+														<xs:annotation>
+															<xs:documentation>The value of the left eye</xs:documentation>
+														</xs:annotation>
+													</xs:element>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="Comments" minOccurs="0">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="Comment" maxOccurs="unbounded">
+														<xs:annotation>
+															<xs:documentation>A comment that may be added to the test</xs:documentation>
+														</xs:annotation>
+														<xs:complexType>
+															<xs:simpleContent>
+																<xs:extension base="xs:string">
+																	<xs:attribute name="created" type="xs:dateTime" use="required"/>
+																	<xs:attribute name="creator" type="xs:string" use="required"/>
+																</xs:extension>
+															</xs:simpleContent>
+														</xs:complexType>
+													</xs:element>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="Sequence" minOccurs="0">
+											<xs:annotation>
+												<xs:documentation>A list of one or more steps according to the protocol used</xs:documentation>
+											</xs:annotation>
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="Step" maxOccurs="unbounded">
+														<xs:annotation>
+															<xs:documentation>A specific step used in this test according the protocol</xs:documentation>
+														</xs:annotation>
+														<xs:complexType>
+															<xs:sequence minOccurs="0">
+																<xs:element name="Channels" minOccurs="0">
+																	<xs:annotation>
+																		<xs:documentation>A list of one or more channels used in this step</xs:documentation>
+																	</xs:annotation>
+																	<xs:complexType>
+																		<xs:sequence minOccurs="0">
+																			<xs:element name="Channel" maxOccurs="unbounded">
+																				<xs:complexType>
+																					<xs:sequence minOccurs="0">
+																						<xs:element name="Impedances" minOccurs="0">
+																							<xs:complexType>
+																								<xs:sequence>
+																									<xs:element name="Impedance" maxOccurs="unbounded">
+																										<xs:complexType>
+																											<xs:complexContent>
+																												<xs:extension base="elvis:MeasurementType">
+																													<xs:attribute name="electrodeRef" type="xs:NCName" use="required"/>
+																												</xs:extension>
+																											</xs:complexContent>
+																										</xs:complexType>
+																									</xs:element>
+																								</xs:sequence>
+																							</xs:complexType>
+																						</xs:element>
+																						<xs:element name="Averages" minOccurs="0">
+																							<xs:annotation>
+																								<xs:documentation>A list of one or more results for this channel</xs:documentation>
+																							</xs:annotation>
+																							<xs:complexType>
+																								<xs:sequence>
+																									<xs:element name="Average" maxOccurs="unbounded">
+																										<xs:annotation>
+																											<xs:documentation>A specific result containing an average of the single sweeps</xs:documentation>
+																										</xs:annotation>
+																										<xs:complexType>
+																											<xs:sequence>
+																												<xs:element name="XValues" type="elvis:MeasurementArrayType" minOccurs="0"/>
+																												<xs:element name="YValues" type="elvis:MeasurementArrayType">
+																													<xs:annotation>
+																														<xs:documentation>The actual data (amplitudes) that was recorded (average of all sweeps belonging to this result). Y-axis</xs:documentation>
+																													</xs:annotation>
+																												</xs:element>
+																												<xs:element name="Impedances" minOccurs="0">
+																													<xs:complexType>
+																														<xs:sequence>
+																															<xs:element name="Impedance" maxOccurs="unbounded">
+																																<xs:complexType>
+																																	<xs:complexContent>
+																																		<xs:extension base="elvis:MeasurementType">
+																																			<xs:attribute name="electrodeRef" type="xs:NCName" use="required"/>
+																																		</xs:extension>
+																																	</xs:complexContent>
+																																</xs:complexType>
+																															</xs:element>
+																														</xs:sequence>
+																													</xs:complexType>
+																												</xs:element>
+																												<xs:element name="Sweeps" minOccurs="0">
+																													<xs:complexType>
+																														<xs:sequence>
+																															<xs:element name="Sweep" maxOccurs="unbounded">
+																																<xs:complexType>
+																																	<xs:attribute name="ref" type="xs:NCName" use="required"/>
+																																</xs:complexType>
+																															</xs:element>
+																														</xs:sequence>
+																													</xs:complexType>
+																												</xs:element>
+																												<xs:element name="Cursors" minOccurs="0">
+																													<xs:annotation>
+																														<xs:documentation>A list of one or more markers set</xs:documentation>
+																													</xs:annotation>
+																													<xs:complexType>
+																														<xs:sequence>
+																															<xs:element name="Cursor" maxOccurs="unbounded">
+																																<xs:annotation>
+																																	<xs:documentation>A specific marker (e. g. a-wave or b-wave)</xs:documentation>
+																																</xs:annotation>
+																																<xs:complexType>
+																																	<xs:sequence>
+																																		<xs:choice>
+																																			<xs:sequence>
+																																				<xs:element name="XValue">
+																																					<xs:annotation>
+																																						<xs:documentation>The x-coordinate of the annotation (e. g. a-wave implicit time)</xs:documentation>
+																																					</xs:annotation>
+																																					<xs:complexType>
+																																						<xs:complexContent>
+																																							<xs:extension base="elvis:MeasurementType"/>
+																																						</xs:complexContent>
+																																					</xs:complexType>
+																																				</xs:element>
+																																				<xs:element name="YValue">
+																																					<xs:annotation>
+																																						<xs:documentation>The y-coordinate of the annotation (e. g. a-wave amplitude)</xs:documentation>
+																																					</xs:annotation>
+																																					<xs:complexType>
+																																						<xs:complexContent>
+																																							<xs:extension base="elvis:MeasurementType"/>
+																																						</xs:complexContent>
+																																					</xs:complexType>
+																																				</xs:element>
+																																			</xs:sequence>
+																																			<xs:element name="Index" type="xs:int"/>
+																																		</xs:choice>
+																																		<xs:element ref="elvis:CustomAttributes" minOccurs="0">
+																																			<xs:annotation>
+																																				<xs:documentation>Additional informations about the marker</xs:documentation>
+																																			</xs:annotation>
+																																		</xs:element>
+																																	</xs:sequence>
+																																	<xs:attribute name="id" type="xs:NCName" use="required"/>
+																																	<xs:attribute name="cursorDefinitionRef" type="xs:NCName" use="required">
+																																		<xs:annotation>
+																																			<xs:documentation>The marker definition this marker refers to</xs:documentation>
+																																		</xs:annotation>
+																																	</xs:attribute>
+																																</xs:complexType>
+																															</xs:element>
+																														</xs:sequence>
+																													</xs:complexType>
+																												</xs:element>
+																												<xs:element name="Parameters" minOccurs="0">
+																													<xs:complexType>
+																														<xs:sequence>
+																															<xs:element name="Parameter" maxOccurs="unbounded">
+																																<xs:annotation>
+																																	<xs:documentation>parameter which can be calculated (e. g. a-wave-slope or V-Log-I k)</xs:documentation>
+																																</xs:annotation>
+																																<xs:complexType>
+																																	<xs:sequence>
+																																		<xs:element name="Cursors" minOccurs="0">
+																																			<xs:annotation>
+																																				<xs:documentation>Annotations used to calculate the value of the parameter</xs:documentation>
+																																			</xs:annotation>
+																																			<xs:complexType>
+																																				<xs:sequence>
+																																					<xs:element name="Cursor" maxOccurs="unbounded">
+																																						<xs:complexType>
+																																							<xs:attribute name="ref" type="xs:NCName" use="required"/>
+																																						</xs:complexType>
+																																					</xs:element>
+																																				</xs:sequence>
+																																			</xs:complexType>
+																																		</xs:element>
+																																		<xs:element name="Value" type="elvis:MeasurementType"/>
+																																		<xs:element ref="elvis:CustomAttributes" minOccurs="0">
+																																			<xs:annotation>
+																																				<xs:documentation>Additional informations about the parameter</xs:documentation>
+																																			</xs:annotation>
+																																		</xs:element>
+																																	</xs:sequence>
+																																	<xs:attribute name="parameterDefinitionRef" type="xs:NCName" use="required"/>
+																																</xs:complexType>
+																															</xs:element>
+																														</xs:sequence>
+																													</xs:complexType>
+																												</xs:element>
+																												<xs:element ref="elvis:CustomAttributes" minOccurs="0">
+																													<xs:annotation>
+																														<xs:documentation>Additional informations about this average</xs:documentation>
+																													</xs:annotation>
+																												</xs:element>
+																											</xs:sequence>
+																											<xs:attribute name="id" type="xs:NCName" use="required">
+																												<xs:annotation>
+																													<xs:documentation>Id which must be unique within the document. </xs:documentation>
+																												</xs:annotation>
+																											</xs:attribute>
+																											<xs:attribute name="rejected" type="xs:boolean" use="optional" default="false"/>
+																										</xs:complexType>
+																									</xs:element>
+																								</xs:sequence>
+																							</xs:complexType>
+																						</xs:element>
+																						<xs:element name="Sweeps" minOccurs="0">
+																							<xs:annotation>
+																								<xs:documentation>A list of one or more sweeps the parent result consists of</xs:documentation>
+																							</xs:annotation>
+																							<xs:complexType>
+																								<xs:sequence>
+																									<xs:element name="Sweep" maxOccurs="unbounded">
+																										<xs:annotation>
+																											<xs:documentation>One specific sweep (recording)</xs:documentation>
+																										</xs:annotation>
+																										<xs:complexType>
+																											<xs:sequence>
+																												<xs:element name="XValues" type="elvis:MeasurementArrayType" minOccurs="0"/>
+																												<xs:element name="YValues">
+																													<xs:annotation>
+																														<xs:documentation>The actual data (amplitudes) that was recorded. Y-Axis</xs:documentation>
+																													</xs:annotation>
+																													<xs:complexType>
+																														<xs:complexContent>
+																															<xs:extension base="elvis:MeasurementArrayType"/>
+																														</xs:complexContent>
+																													</xs:complexType>
+																												</xs:element>
+																												<xs:element name="Impedances" minOccurs="0">
+																													<xs:complexType>
+																														<xs:sequence>
+																															<xs:element name="Impedance" maxOccurs="unbounded">
+																																<xs:complexType>
+																																	<xs:complexContent>
+																																		<xs:extension base="elvis:MeasurementType">
+																																			<xs:attribute name="electrodeRef" type="xs:NCName" use="required"/>
+																																		</xs:extension>
+																																	</xs:complexContent>
+																																</xs:complexType>
+																															</xs:element>
+																														</xs:sequence>
+																													</xs:complexType>
+																												</xs:element>
+																												<xs:element name="Sweeps" minOccurs="0">
+																													<xs:complexType>
+																														<xs:sequence>
+																															<xs:element name="Sweep" maxOccurs="unbounded">
+																																<xs:complexType>
+																																	<xs:attribute name="ref" type="xs:NCName" use="required"/>
+																																</xs:complexType>
+																															</xs:element>
+																														</xs:sequence>
+																													</xs:complexType>
+																												</xs:element>
+																												<xs:element ref="elvis:CustomAttributes" minOccurs="0">
+																													<xs:annotation>
+																														<xs:documentation>Additional informations about the sweep</xs:documentation>
+																													</xs:annotation>
+																												</xs:element>
+																											</xs:sequence>
+																											<xs:attribute name="id" type="xs:NCName" use="required">
+																												<xs:annotation>
+																													<xs:documentation>Id which must be unique within the document. </xs:documentation>
+																												</xs:annotation>
+																											</xs:attribute>
+																											<xs:attribute name="rejected" type="xs:boolean" use="optional" default="false">
+																												<xs:annotation>
+																													<xs:documentation>True if this sweep was rejected (default is false)</xs:documentation>
+																												</xs:annotation>
+																											</xs:attribute>
+																										</xs:complexType>
+																									</xs:element>
+																								</xs:sequence>
+																							</xs:complexType>
+																						</xs:element>
+																						<xs:element ref="elvis:CustomAttributes" minOccurs="0">
+																							<xs:annotation>
+																								<xs:documentation>Additional informations about this channel</xs:documentation>
+																							</xs:annotation>
+																						</xs:element>
+																					</xs:sequence>
+																					<xs:attribute name="id" type="xs:NCName" use="required"/>
+																					<xs:attribute name="enabled" type="xs:boolean" use="optional" default="true">
+																						<xs:annotation>
+																							<xs:documentation>If this channel was enabled during the test (default is true)</xs:documentation>
+																						</xs:annotation>
+																					</xs:attribute>
+																					<xs:attribute name="channelDefinitionRef" type="xs:NCName" use="required">
+																						<xs:annotation>
+																							<xs:documentation>The channel definition this channel refers to</xs:documentation>
+																						</xs:annotation>
+																					</xs:attribute>
+																				</xs:complexType>
+																				<xs:key name="SweepKey">
+																					<xs:selector xpath="elvis:Sweeps/elvis:Sweep"/>
+																					<xs:field xpath="@id"/>
+																				</xs:key>
+																				<xs:keyref name="Average2SweepKeyRef" refer="elvis:SweepKey">
+																					<xs:selector xpath="elvis:Averages/elvis:Average/elvis:Sweeps/elvis:Sweep"/>
+																					<xs:field xpath="@ref"/>
+																				</xs:keyref>
+																			</xs:element>
+																		</xs:sequence>
+																	</xs:complexType>
+																</xs:element>
+																<xs:element name="Notes" type="xs:string" minOccurs="0">
+																	<xs:annotation>
+																		<xs:documentation>Comments for this step</xs:documentation>
+																	</xs:annotation>
+																</xs:element>
+																<xs:element ref="elvis:CustomAttributes" minOccurs="0">
+																	<xs:annotation>
+																		<xs:documentation>Additional informations about the test</xs:documentation>
+																	</xs:annotation>
+																</xs:element>
+															</xs:sequence>
+															<xs:attribute name="id" type="xs:NCName" use="required"/>
+															<xs:attribute name="stepDefinitionRef" type="xs:NCName" use="required">
+																<xs:annotation>
+																	<xs:documentation>The step definition of the protocol this step refers to</xs:documentation>
+																</xs:annotation>
+															</xs:attribute>
+														</xs:complexType>
+													</xs:element>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="Parameters" minOccurs="0">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="Parameter" maxOccurs="unbounded">
+														<xs:annotation>
+															<xs:documentation>parameter which can be calculated (e. g. a-wave-slope or V-Log-I k)</xs:documentation>
+														</xs:annotation>
+														<xs:complexType>
+															<xs:sequence>
+																<xs:element name="Steps" minOccurs="0">
+																	<xs:complexType>
+																		<xs:sequence>
+																			<xs:element name="Step" maxOccurs="unbounded">
+																				<xs:complexType>
+																					<xs:attribute name="ref" type="xs:NCName" use="required"/>
+																				</xs:complexType>
+																			</xs:element>
+																		</xs:sequence>
+																	</xs:complexType>
+																</xs:element>
+																<xs:element name="Channels" minOccurs="0">
+																	<xs:complexType>
+																		<xs:sequence>
+																			<xs:element name="Channel" maxOccurs="unbounded">
+																				<xs:complexType>
+																					<xs:attribute name="ref" type="xs:NCName" use="required"/>
+																				</xs:complexType>
+																			</xs:element>
+																		</xs:sequence>
+																	</xs:complexType>
+																</xs:element>
+																<xs:element name="Averages" minOccurs="0">
+																	<xs:complexType>
+																		<xs:sequence>
+																			<xs:element name="Average" maxOccurs="unbounded">
+																				<xs:complexType>
+																					<xs:attribute name="ref" type="xs:NCName" use="required"/>
+																				</xs:complexType>
+																			</xs:element>
+																		</xs:sequence>
+																	</xs:complexType>
+																</xs:element>
+																<xs:element name="Cursors" minOccurs="0">
+																	<xs:annotation>
+																		<xs:documentation>Annotations used to calculate the value of the parameter</xs:documentation>
+																	</xs:annotation>
+																	<xs:complexType>
+																		<xs:sequence>
+																			<xs:element name="Cursor" maxOccurs="unbounded">
+																				<xs:complexType>
+																					<xs:attribute name="ref" type="xs:NCName" use="required"/>
+																				</xs:complexType>
+																			</xs:element>
+																		</xs:sequence>
+																	</xs:complexType>
+																</xs:element>
+																<xs:element name="Value" type="elvis:MeasurementType" minOccurs="0"/>
+																<xs:element ref="elvis:CustomAttributes" minOccurs="0">
+																	<xs:annotation>
+																		<xs:documentation>Additional informations about the parameter</xs:documentation>
+																	</xs:annotation>
+																</xs:element>
+															</xs:sequence>
+															<xs:attribute name="parameterDefinitionRef" type="xs:NCName" use="required"/>
+														</xs:complexType>
+													</xs:element>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+										<xs:element ref="elvis:CustomAttributes" minOccurs="0">
+											<xs:annotation>
+												<xs:documentation>Additional informations about the test</xs:documentation>
+											</xs:annotation>
+										</xs:element>
+									</xs:sequence>
+									<xs:attribute name="subjectRef" type="xs:NCName" use="required"/>
+									<xs:attribute name="protocolRef" type="xs:NCName" use="required"/>
+									<xs:attribute name="normal" type="xs:boolean" use="optional" default="false">
+										<xs:annotation>
+											<xs:documentation>Used to indicate wether this subject is a healthy or a control subject</xs:documentation>
+										</xs:annotation>
+									</xs:attribute>
+								</xs:complexType>
+								<xs:key name="CursorKey">
+									<xs:selector xpath="elvis:Sequence/elvis:Step/elvis:Channels/elvis:Channel/elvis:Averages/elvis:Average/elvis:Cursors/elvis:Cursor"/>
+									<xs:field xpath="@id"/>
+								</xs:key>
+								<xs:keyref name="AverageParameter2CursorKeyRef" refer="elvis:CursorKey">
+									<xs:selector xpath="elvis:Sequence/elvis:Step/elvis:Channels/elvis:Channel/elvis:Averages/elvis:Average/elvis:Parameters/elvis:Parameter/elvis:Cursors/elvis:Cursor"/>
+									<xs:field xpath="@ref"/>
+								</xs:keyref>
+								<xs:keyref name="RecordingSessionParameter2CursorKeyRef" refer="elvis:CursorKey">
+									<xs:selector xpath="elvis:Parameters/elvis:Parameter/elvis:Cursors/elvis:Cursor"/>
+									<xs:field xpath="@ref"/>
+								</xs:keyref>
+								<xs:key name="ChannelKey">
+									<xs:selector xpath="elvis:Sequence/elvis:Step/elvis:Channels/elvis:Channel"/>
+									<xs:field xpath="@id"/>
+								</xs:key>
+								<xs:key name="AverageKey">
+									<xs:selector xpath="elvis:Sequence/elvis:Step/elvis:Channels/elvis:Channel/elvis:Averages/elvis:Average"/>
+									<xs:field xpath="@id"/>
+								</xs:key>
+								<xs:key name="StepKey">
+									<xs:selector xpath="elvis:Sequence/elvis:Step"/>
+									<xs:field xpath="@id"/>
+								</xs:key>
+								<xs:keyref name="RecordingSessionParameter2StepKeyRef" refer="elvis:StepKey">
+									<xs:selector xpath="elvis:Parameters/elvis:Parameter/elvis:Steps/elvis:Step"/>
+									<xs:field xpath="@ref"/>
+								</xs:keyref>
+								<xs:keyref name="RecordingSessionParameter2ChannelKeyRef" refer="elvis:ChannelKey">
+									<xs:selector xpath="elvis:Parameters/elvis:Parameter/elvis:Channels/elvis:Channel"/>
+									<xs:field xpath="@ref"/>
+								</xs:keyref>
+								<xs:keyref name="RecordingSessionParameter2AverageKeyRef" refer="elvis:AverageKey">
+									<xs:selector xpath="elvis:Parameters/elvis:Parameter/elvis:Averages/elvis:Average"/>
+									<xs:field xpath="@ref"/>
+								</xs:keyref>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="NormativeData" minOccurs="0">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="DataSet" maxOccurs="unbounded">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="Source"/>
+									</xs:sequence>
+									<xs:attribute name="created" type="xs:dateTime" use="required"/>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element ref="elvis:CustomAttributes" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>May be used to store additional informations to the subject as a list of key value pairs.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="dsig:Signature" minOccurs="0"/>
+			</xs:all>
+			<xs:attribute name="version" type="xs:decimal" use="required"/>
+			<xs:attribute name="created" type="xs:dateTime" use="required"/>
+			<xs:attribute name="creator" type="xs:string"/>
+		</xs:complexType>
+		<xs:key name="SubjectKey">
+			<xs:selector xpath="elvis:Subjects/elvis:Subject"/>
+			<xs:field xpath="@id"/>
+		</xs:key>
+		<xs:key name="ProtocolKey">
+			<xs:selector xpath="elvis:Protocols/elvis:Protocol"/>
+			<xs:field xpath="@id"/>
+		</xs:key>
+		<xs:keyref name="RecordingSession2SubjectKeyRef" refer="elvis:SubjectKey">
+			<xs:selector xpath="elvis:RecordingSessions/elvis:RecordingSession"/>
+			<xs:field xpath="@subjectRef"/>
+		</xs:keyref>
+		<xs:keyref name="RecordingSession2ProtocolKeyRef" refer="elvis:ProtocolKey">
+			<xs:selector xpath="elvis:RecordingSessions/elvis:RecordingSession"/>
+			<xs:field xpath="@protocolRef"/>
+		</xs:keyref>
+		<xs:key name="StepDefinitionKey">
+			<xs:selector xpath="elvis:Protocols/elvis:Protocol/elvis:SequenceDefinition/elvis:StepDefinition"/>
+			<xs:field xpath="@id"/>
+		</xs:key>
+		<xs:keyref name="Step2StepDefinitionKeyRef" refer="elvis:StepDefinitionKey">
+			<xs:selector xpath="elvis:RecordingSessions/elvis:RecordingSession/elvis:Sequence/elvis:Step"/>
+			<xs:field xpath="@stepDefinitionRef"/>
+		</xs:keyref>
+		<xs:key name="ChannelDefinitionKey">
+			<xs:selector xpath="elvis:Protocols/elvis:Protocol/elvis:SequenceDefinition/elvis:StepDefinition/elvis:ChannelDefinitions/elvis:ChannelDefinition"/>
+			<xs:field xpath="@id"/>
+		</xs:key>
+		<xs:keyref name="CursorDefinition2ChannelDefinitionKeyRef" refer="elvis:ChannelDefinitionKey">
+			<xs:selector xpath="elvis:Protocols/elvis:Protocol/elvis:SequenceDefinition/elvis:StepDefinition/elvis:CursorDefinitions/elvis:CursorDefinition/elvis:ChannelDefinitions/elvis:ChannelDefinition"/>
+			<xs:field xpath="@ref"/>
+		</xs:keyref>
+		<xs:keyref name="Channel2ChannelDefinitionKeyRef" refer="elvis:ChannelDefinitionKey">
+			<xs:selector xpath="elvis:RecordingSessions/elvis:RecordingSession/elvis:Sequence/elvis:Step/elvis:Channels/elvis:Channel"/>
+			<xs:field xpath="@channelDefinitionRef"/>
+		</xs:keyref>
+		<xs:key name="CursorDefinitionKey">
+			<xs:selector xpath="elvis:Protocols/elvis:Protocol/elvis:SequenceDefinition/elvis:StepDefinition/elvis:CursorDefinitions/elvis:CursorDefinition"/>
+			<xs:field xpath="@id"/>
+		</xs:key>
+		<xs:keyref name="RelativeValue2CursorDefinitionKeyRef" refer="elvis:CursorDefinitionKey">
+			<xs:selector xpath="elvis:Protocols/elvis:Protocol/elvis:SequenceDefinition/elvis:StepDefinition/elvis:CursorDefinitions/elvis:CursorDefinition/elvis:Calculation/elvis:RelativeValue/*"/>
+			<xs:field xpath="@cursorDefinitionRef"/>
+		</xs:keyref>
+		<xs:keyref name="Cursor2CursorDefinitionKeyRef" refer="elvis:CursorDefinitionKey">
+			<xs:selector xpath="elvis:RecordingSessions/elvis:RecordingSession/elvis:Sequence/elvis:Step/elvis:Channels/elvis:Channel/elvis:Averages/elvis:Average/elvis:Cursors/elvis:Cursor"/>
+			<xs:field xpath="@cursorDefinitionRef"/>
+		</xs:keyref>
+		<xs:key name="ProtococlParameterDefinitionKey">
+			<xs:selector xpath="elvis:Protocols/elvis:Protocol/elvis:ParameterDefinitions/elvis:ParameterDefinition"/>
+			<xs:field xpath="@id"/>
+		</xs:key>
+		<xs:key name="StepDefinitionParameterDefinitionKey">
+			<xs:selector xpath="elvis:Protocols/elvis:Protocol/elvis:SequenceDefinition/elvis:StepDefinition/elvis:ParameterDefinitions/elvis:ParameterDefinition"/>
+			<xs:field xpath="@id"/>
+		</xs:key>
+		<xs:keyref name="ProtocolParameterDefinition2CursorDefinitionKeyRef" refer="elvis:CursorDefinitionKey">
+			<xs:selector xpath="elvis:Protocols/elvis:Protocol/elvis:ParameterDefinitions/elvis:ParameterDefinition/elvis:CursorDefinitions/elvis:CursorDefinition"/>
+			<xs:field xpath="@ref"/>
+		</xs:keyref>
+		<xs:keyref name="ProtocolParameterDefinition2ChannelDefinitionKeyRef" refer="elvis:ChannelDefinitionKey">
+			<xs:selector xpath="elvis:Protocols/elvis:Protocol/elvis:ParameterDefinitions/elvis:ParameterDefinition/elvis:ChannelDefinitions/elvis:ChannelDefinition"/>
+			<xs:field xpath="@ref"/>
+		</xs:keyref>
+		<xs:keyref name="ProtocolParameterDefinition2StepDefinitionKeyRef" refer="elvis:StepDefinitionKey">
+			<xs:selector xpath="elvis:Protocols/elvis:Protocol/elvis:ParameterDefinitions/elvis:ParameterDefinition/elvis:StepDefinitions/elvis:StepDefinition"/>
+			<xs:field xpath="@ref"/>
+		</xs:keyref>
+		<xs:keyref name="StepDefinitionParameterDefinition2CursorDefinitionKeyRef" refer="elvis:CursorDefinitionKey">
+			<xs:selector xpath="elvis:Protocols/elvis:Protocol/elvis:SequenceDefinition/elvis:StepDefinition/elvis:ParameterDefinitions/elvis:ParameterDefinition/elvis:CursorDefinitions/elvis:CursorDefinition"/>
+			<xs:field xpath="@ref"/>
+		</xs:keyref>
+		<xs:keyref name="StepDefinitionParameterDefinition2ChannelDefinitionKeyRef" refer="elvis:ChannelDefinitionKey">
+			<xs:selector xpath="elvis:Protocols/elvis:Protocol/elvis:SequenceDefinition/elvis:StepDefinition/elvis:ParameterDefinitions/elvis:ParameterDefinition/elvis:ChannelDefinitions/elvis:ChannelDefinition"/>
+			<xs:field xpath="@ref"/>
+		</xs:keyref>
+		<xs:keyref name="RecordingSessionParameter2ProtocolParameterDefinitionKeyRef" refer="elvis:ProtococlParameterDefinitionKey">
+			<xs:selector xpath="elvis:RecordingSessions/elvis:RecordingSession/elvis:Parameters/elvis:Parameter"/>
+			<xs:field xpath="@parameterDefinitionRef"/>
+		</xs:keyref>
+		<xs:keyref name="Impedance2ElectrodeKeyRef" refer="elvis:ElectrodeKey">
+			<xs:selector xpath="elvis:RecordingSessions/elvis:RecordingSession/elvis:Sequence/elvis:Step/elvis:Channels/elvis:Channel/elvis:Impedances/elvis:Impedance"/>
+			<xs:field xpath="@electrodeRef"/>
+		</xs:keyref>
+		<xs:keyref name="RecordingSessionParameter2StepDefinitionParameterDefinitionKeyRef" refer="elvis:StepDefinitionParameterDefinitionKey">
+			<xs:selector xpath="elvis:RecordingSessions/elvis:RecordingSession/elvis:Sequence/elvis:Step/elvis:Channels/elvis:Channel/elvis:Averages/elvis:Average/elvis:Parameters/elvis:Parameter"/>
+			<xs:field xpath="@parameterDefinitionRef"/>
+		</xs:keyref>
+	</xs:element>
+	<xs:element name="CustomAttributes">
+		<xs:annotation>
+			<xs:documentation>A list of attributes that may be used in several parent elements for storing additional information not described by the standard. This attributes are manufacturer dependend and may not be recognized by different manufacturers. Informations can be stored as key-value-pairs.</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence minOccurs="0">
+				<xs:element name="Attribute" minOccurs="1" maxOccurs="unbounded">
+					<xs:annotation>
+						<xs:documentation>Value of an additional attribute</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:simpleContent>
+							<xs:extension base="xs:anySimpleType">
+								<xs:attribute name="key" type="xs:string" use="required">
+									<xs:annotation>
+										<xs:documentation>The key of an additional attribute</xs:documentation>
+									</xs:annotation>
+								</xs:attribute>
+							</xs:extension>
+						</xs:simpleContent>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:group name="stimulusGroup">
+		<xs:sequence>
+			<xs:element name="FlashDuration" type="elvis:MeasurementType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The duration of the flash</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:choice>
+				<xs:sequence>
+					<xs:element name="FlashStrength">
+						<xs:annotation>
+							<xs:documentation>The stimulus intensity</xs:documentation>
+						</xs:annotation>
+						<xs:complexType>
+							<xs:simpleContent>
+								<xs:extension base="elvis:MeasurementType">
+									<xs:attribute name="type" default="photopic">
+										<xs:simpleType>
+											<xs:restriction base="xs:token">
+												<xs:enumeration value="photopic"/>
+												<xs:enumeration value="scotopic"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:attribute>
+								</xs:extension>
+							</xs:simpleContent>
+						</xs:complexType>
+					</xs:element>
+					<xs:choice>
+						<xs:element name="FlashColorCIE">
+							<xs:annotation>
+								<xs:documentation>The color of the stimulus</xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="CIEx">
+										<xs:simpleType>
+											<xs:restriction base="xs:double">
+												<xs:minInclusive value="0"/>
+												<xs:maxInclusive value="1"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="CIEy">
+										<xs:simpleType>
+											<xs:restriction base="xs:double">
+												<xs:minInclusive value="0"/>
+												<xs:maxInclusive value="1"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="FlashColor" type="xs:token"/>
+					</xs:choice>
+				</xs:sequence>
+				<xs:element name="FlashSpectrum" minOccurs="0">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="SpectralComponent" type="elvis:MeasurementType" maxOccurs="unbounded"/>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:choice>
+			<xs:element name="Fixation" type="xs:boolean" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The intensity of the fixation (set to 0 if fixation is turned off)</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:choice minOccurs="0">
+				<xs:sequence>
+					<xs:element name="BackgroundLuminance">
+						<xs:annotation>
+							<xs:documentation>The background intensity</xs:documentation>
+						</xs:annotation>
+						<xs:complexType>
+							<xs:simpleContent>
+								<xs:extension base="elvis:MeasurementType">
+									<xs:attribute name="type" use="required">
+										<xs:simpleType>
+											<xs:restriction base="xs:token">
+												<xs:enumeration value="photopic"/>
+												<xs:enumeration value="scotopic"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:attribute>
+								</xs:extension>
+							</xs:simpleContent>
+						</xs:complexType>
+					</xs:element>
+					<xs:choice minOccurs="0">
+						<xs:element name="BackgroundColorCIE">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="CIEx">
+										<xs:simpleType>
+											<xs:restriction base="xs:double">
+												<xs:minInclusive value="0"/>
+												<xs:maxInclusive value="1"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="CIEy">
+										<xs:simpleType>
+											<xs:restriction base="xs:double">
+												<xs:minInclusive value="0"/>
+												<xs:maxInclusive value="1"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="BackgroundColor" type="xs:token"/>
+					</xs:choice>
+				</xs:sequence>
+				<xs:element name="BackgroundSpectrum" minOccurs="0">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="SpectralComponent" type="elvis:MeasurementType" maxOccurs="unbounded"/>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:choice>
+		</xs:sequence>
+	</xs:group>
+	<xs:simpleType name="DoubleArrayType">
+		<xs:list itemType="xs:double"/>
+	</xs:simpleType>
+	<xs:complexType name="MeasurementType">
+		<xs:annotation>
+			<xs:documentation>Used for storing values and their associated unit</xs:documentation>
+		</xs:annotation>
+		<xs:simpleContent>
+			<xs:extension base="xs:double">
+				<xs:attribute name="unit" type="xs:token" use="required">
+					<xs:annotation>
+						<xs:documentation>The unit of the value formatted in UCUM style (http://unitsofmeasure.org)</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="MeasurementArrayType">
+		<xs:annotation>
+			<xs:documentation>Used for storing values as whitespace  separated array and their associated unit</xs:documentation>
+		</xs:annotation>
+		<xs:simpleContent>
+			<xs:extension base="elvis:DoubleArrayType">
+				<xs:attribute name="unit" type="xs:token" use="required">
+					<xs:annotation>
+						<xs:documentation>The unit of the values formatted in UCUM style (http://unitsofmeasure.org)</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+</xs:schema>
