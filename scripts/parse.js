@@ -157,10 +157,10 @@ function getCursorNodes(averageNode) {
 }
 
 function getCursorCoordinates(elvisNode, cursorNode, xUnit, yUnit) {
-    var path1 = "elvis:Domain/text()";
-    var path2 = "elvis:Range/text()";
-    var path3 = "elvis:Domain/@unit";
-    var path4 = "elvis:Range/@unit";
+    var path1 = "elvis:XValue/text()";
+    var path2 = "elvis:YValue/text()";
+    var path3 = "elvis:XValue/@unit";
+    var path4 = "elvis:YValue/@unit";
     var x = cursorNode.selectSingleNode(path1).nodeValue;
     var y = cursorNode.selectSingleNode(path2).nodeValue;
     var xCurrentUnit = cursorNode.selectSingleNode(path3).nodeValue;
@@ -175,7 +175,7 @@ function getCursorCoordinates(elvisNode, cursorNode, xUnit, yUnit) {
     var path5 = "/*/*/*/*/*/*/elvis:CursorDefinition[@id='" + cursorDefinitionRef + "']";
     var cursorDefinitionNode = elvisNode.selectSingleNode(path5);
 
-    var path8 = "elvis:RelativeTo/elvis:CursorDefinitionRef/text()";
+    var path8 = "elvis:Calculation/elvis:RelativeValue/elvis:YValue/@cursorDefinitionRef";
     var temp = cursorDefinitionNode.selectSingleNode(path8);
     if (temp != null) {
         var relativeCursorDefinitionRef = temp.nodeValue;
@@ -195,7 +195,7 @@ function getCursorCoordinates(elvisNode, cursorNode, xUnit, yUnit) {
 }
 
 function getData(averageNode, samplingRate, preTriggerTime, rangeFromUnit, rangeToUnit) {
-    var path2 = "elvis:Values/text()";
+    var path2 = "elvis:YValues/text()";
 
     var yArray = string2floatArray(averageNode.selectSingleNode(path2).nodeValue);
 
@@ -241,7 +241,7 @@ function getPreTriggerTime(elvisNode, stepNode, toUnit) {
 }
 
 function getRangeUnit(averageNode) {
-    var path1 = "elvis:Values/@unit";
+    var path1 = "elvis:YValues/@unit";
     return averageNode.selectSingleNode(path1).nodeValue;
 }
 
