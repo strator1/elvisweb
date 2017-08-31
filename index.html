@@ -188,6 +188,7 @@
                   createPlots("tabContent", elvisNode, stepNode);
                   alertify.success("Success loading file " + file.name);
                 } catch (err) {
+                  console.log(err);
                   alertify.error("Error parsing file " + file.name + ": " + err);
                 }
             }
