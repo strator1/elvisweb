@@ -378,7 +378,7 @@
 																						</xs:element>
 																						<xs:element name="StimulusStrength">
 																							<xs:annotation>
-																								<xs:documentation>The stimulus intensity of black and white hexagons</xs:documentation>
+																								<xs:documentation>The stimulus luminance of black and white hexagons</xs:documentation>
 																							</xs:annotation>
 																							<xs:complexType>
 																								<xs:sequence>
@@ -387,9 +387,9 @@
 																								</xs:sequence>
 																							</xs:complexType>
 																						</xs:element>
-																						<xs:element name="BackgroundIntensity">
+																						<xs:element name="BackgroundLuminancey">
 																							<xs:annotation>
-																								<xs:documentation>The background intensity</xs:documentation>
+																								<xs:documentation>The background luminance</xs:documentation>
 																							</xs:annotation>
 																							<xs:complexType>
 																								<xs:simpleContent>
@@ -422,7 +422,7 @@
 																						<xs:element name="StimulusStrength" type="elvis:MeasurementType"/>
 																						<xs:element name="BackgroundLuminance">
 																							<xs:annotation>
-																								<xs:documentation>The background intensity</xs:documentation>
+																								<xs:documentation>The background luminance</xs:documentation>
 																							</xs:annotation>
 																							<xs:complexType>
 																								<xs:simpleContent>
@@ -483,14 +483,14 @@
 																								<xs:documentation>The contrast of the stimulus</xs:documentation>
 																							</xs:annotation>
 																						</xs:element>
-																						<xs:element name="Intensity" type="elvis:MeasurementType">
+																						<xs:element name="luminance" type="elvis:MeasurementType">
 																							<xs:annotation>
-																								<xs:documentation>The intensity of the stimulus</xs:documentation>
+																								<xs:documentation>The luminance of the stimulus</xs:documentation>
 																							</xs:annotation>
 																						</xs:element>
 																						<xs:element name="AmbientLumiance" type="elvis:MeasurementType" minOccurs="0">
 																							<xs:annotation>
-																								<xs:documentation>The intensity of the ambient luminance</xs:documentation>
+																								<xs:documentation>The luminance of the ambient luminance</xs:documentation>
 																							</xs:annotation>
 																						</xs:element>
 																						<xs:element ref="elvis:CustomAttributes" minOccurs="0">
@@ -1579,7 +1579,7 @@
 				<xs:sequence>
 					<xs:element name="FlashStrength">
 						<xs:annotation>
-							<xs:documentation>The stimulus intensity</xs:documentation>
+							<xs:documentation>The stimulus strength</xs:documentation>
 						</xs:annotation>
 						<xs:complexType>
 							<xs:simpleContent>
@@ -1642,7 +1642,7 @@
 				<xs:sequence>
 					<xs:element name="BackgroundLuminance">
 						<xs:annotation>
-							<xs:documentation>The background intensity</xs:documentation>
+							<xs:documentation>The background luminance</xs:documentation>
 						</xs:annotation>
 						<xs:complexType>
 							<xs:simpleContent>
